@@ -1,0 +1,11 @@
+{
+  "images_path": "/Users/zinebsordo/Desktop/berkeleylab/data/image_data/data_test/images",
+  "labels_path": "/Users/zinebsordo/Desktop/berkeleylab/data/image_data/data_test/labels",
+  "save_path": "/Users/zinebsordo/Desktop/berkeleylab/data/image_data/prepare_test",
+  "save_pred_path": "/Users/zinebsordo/Desktop/berkeleylab/data/image_data/pred_test",
+  "nb_pred_data": "1",
+  "train_patch_size": [64,64],
+  "step_size": [32,32],
+  "min_labeled": 0.2
+
+}
