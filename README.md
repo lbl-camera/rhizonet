@@ -1,4 +1,4 @@
-# rhizonet
+# Rhizonet
 segmentation for plant roots grown in EcoFABs
 Pipeline for deep-learning based image segmentation of plant root 2D slices at different timestamps using a U-net.
 
