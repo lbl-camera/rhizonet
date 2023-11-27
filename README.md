@@ -9,8 +9,12 @@ The training patches can be created using the data preparation code for cropping
 The training was done on a dataset of multiple ecofabs (plants with different nutrition types) at the two last timestamps. The use of at least one gpu is necessary for training on small patch-size images.
 The predictions can be done on any other timestamp by loading the appropriate model path. The Google Colab tutorial below details the steps to do so with a given subset of images and 3 possible model weights (varying with the size of the used patches).
 It is also possible to apply the post-processing using the Google Colab tutorial on the predicted images which uses cropping and morphological operations, and plot the extracted biomass from the processed predictions. 
-# Getting started
-# Steps to train the model
+
+# Google Colab Tutorial for predicting and processing images
+This [https://colab.research.google.com/drive/1wWQLiIGTbs6q0024-PymPz93gnXOruoC?usp=sharing](Google Colab Tutorial) is a short notebook that can load 3 possible model weights depending the model type preferred (3 model weights for each patch size trained model), generate predictions and process these predictions given 2 random unseen EcoFAB images of the same experiment. It also generates plots of the extracted biomass for each nutrition type at each date and compares it to the groundtruth (which is the manually scaled biomass by biologists). This information is made available in the provided csv file [biomass.csv](biomass.csv). 
+
+
+# Getting started for running the code from scratch 
 
 ## Dependencies installation
 
@@ -71,6 +75,8 @@ The processed images are saved in the directory "output_path" and the data is in
     ```commandline
     sbatch batch_scripts/processing_unet2d.sh
     ```
+
+    
     
 ## Authors
 
