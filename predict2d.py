@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 from unet2D import Unet2D
 
-from dataset import PredDataset2D, ImageDataset, tiff_reader
+from unet2D import PredDataset2D, ImageDataset, tiff_reader
 from monai.data import ArrayDataset, create_test_image_2d, list_data_collate, decollate_batch
 from monai.inferers import sliding_window_inference
 from monai.transforms import (
