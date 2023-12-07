@@ -9,7 +9,7 @@ import torch
 from skimage.morphology import (erosion, dilation, closing, opening,
                                 area_closing, area_opening)
 from skimage.measure import label
-from skimage.morphology import convex_hull_image
+from skimage.morphology import convex_hull_image, disk
 
 
 def getLargestCC(segments):
@@ -27,14 +27,8 @@ def maxProjection(limg, ndown=1):
     return IM_MAX
 
 
-def get_hull_mask(data_path, output_path, area_opening_param=500, area_closing_param=200,):
-    element = np.array([[1, 0, 0, 0, 0, 0, 0],
-                        [0, 1, 1, 1, 1, 0, 0],
-                        [0, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 0],
-                        [0, 0, 1, 1, 1, 1, 0],
-                        [0, 0, 0, 0, 0, 0, 1]])
+def get_hull_mask(data_path, output_path, area_opening_param=500, area_closing_param=200, disk_radius=4):
+    element = disk(disk_radius)
 
     for e in tqdm(sorted([e for e in os.listdir(data_path) if not e.startswith(".DS_Store")])):
         print("Processing ecofab {}".format(e))
@@ -68,7 +62,10 @@ def get_hull_mask(data_path, output_path, area_opening_param=500, area_closing_p
 
             # apply morphological operations (area opening on area closing)
             pred = area_opening(area_closing(result, area_closing_param), area_opening_param)
-            io.imsave(os.path.join(pred_chull_dir, file), pred, check_contrast=False)
+
+            # apply additional erosion to obtain thinner roots
+            pred_eroded = erosion(erosion(pred, disk(2)), disk(2))
+            io.imsave(os.path.join(pred_chull_dir, file), pred_eroded, check_contrast=False)
 
 
 def _parse_training_variables(argparse_args):
@@ -94,7 +91,7 @@ def main():
     args = parser.parse_args()
     args = _parse_training_variables(args)
 
-    get_hull_mask(args['data_path'], args['output_path'], args['area_opening'], args['area_closing'],)
+    get_hull_mask(args['data_path'], args['output_path'], args['area_opening'], args['area_closing'],args['disk_radius'])
 
 
 if __name__ == '__main__':
