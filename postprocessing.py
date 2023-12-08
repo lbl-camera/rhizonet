@@ -64,7 +64,7 @@ def get_hull_mask(data_path, output_path, area_opening_param=500, area_closing_p
             pred = area_opening(area_closing(result, area_closing_param), area_opening_param)
 
             # apply additional erosion to obtain thinner roots
-            pred_eroded = erosion(erosion(pred, disk(2)), disk(2))
+            pred_eroded = erosion(pred, disk(2))
             io.imsave(os.path.join(pred_chull_dir, file), pred_eroded, check_contrast=False)
 
 
