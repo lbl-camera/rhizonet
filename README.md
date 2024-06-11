@@ -77,7 +77,7 @@ The processed images are saved in the directory "output_path" and the data is in
     ```
 ## License Agreement
 
-RhizoNet Copyright (c) 2023, The Regents of the University of California,
+RhizoNet Copyright (c) 2024, The Regents of the University of California,
 through Lawrence Berkeley National Laboratory (subject to receipt of any
 required approvals from the U.S. Dept. of Energy). All rights reserved.
 
