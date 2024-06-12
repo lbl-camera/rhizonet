@@ -75,7 +75,7 @@ The processed images are saved in the directory "output_path" and the data is in
     ```commandline
     sbatch batch_scripts/processing_unet2d.sh
     ```
-## License Agreement
+## Copyright
 
 RhizoNet Copyright (c) 2024, The Regents of the University of California,
 through Lawrence Berkeley National Laboratory (subject to receipt of any
