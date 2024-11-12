@@ -63,8 +63,8 @@ class tiff_reader(MapTransform):
 
     def __call__(self, data_dict):
         # verify that the label correspond to the appropriate raw image
-        raw_name = data_dict['image'].split("/")[-1][:-4]
-        annot_name = data_dict['label'].split("/")[-1][:-4].replace("Annotation", "")
+        raw_name = os.path.basename(data_dict['image'])[:-4]
+        annot_name = os.path.basename(data_dict['label'])[:-4].replace("Annotation", "")
         assert raw_name == annot_name
 
         data = {}
@@ -81,6 +81,10 @@ class tiff_reader(MapTransform):
                         data[key] = np.array(Image.open(data_dict[key]))
                 elif key == "label":
                     data[key] = io.imread(data_dict[key])
+
+        if self.boundingbox:
+            data['image'], data['label'] = extract_largest_component_bbox_image_lab(img=data['image'], lab=data['label'])
+
         return data
 
 
