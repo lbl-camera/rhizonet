@@ -25,7 +25,7 @@ from monai.transforms import (
     EnsureType
 )
 
-from utils import transform_pred_to_annot
+from utils import transform_pred_to_annot, extract_largest_component_bbox_image, createBinaryAnnotation
 from PIL import ImageDraw
 import torchvision.transforms.functional as TF
 from datetime import datetime
@@ -41,7 +41,7 @@ def transform_image(img_path):
             EnsureType()
         ]
     )
-    img = np.array(Image.open(img_path))
+    img = np.array(Image.open(img_path))[...,:3]
     img = transform(np.transpose(img, (2, 0, 1)))
     return (img, img_path)
 
@@ -52,6 +52,7 @@ def pred_function(image, model, pred_patch_size):
 
 def predict_step(image_path, model, pred_patch_size):
     image, img_path = transform_image(image_path)
+    cropped_image = extract_largest_component_bbox_image(image, predict=True)
     logits = pred_function(image, model, pred_patch_size)
     pred = torch.argmax(logits, dim=1).byte().squeeze(dim=1)
     pred = (pred * 255).byte()
@@ -85,13 +86,6 @@ def elliptical_crop(img, center_x, center_y, width, height):
     return image, np.array(cropped_image)
 
 
-def createBinaryAnnotation(img):
-    '''Find all the annotations that are root, then NOT root, then combine'''
-    u = np.unique(img)
-    bkg = np.zeros(img.shape)  # background
-    frg = (img == u[2]).astype(int) * 255
-    return bkg + frg
-
 
 def get_biomass(binary_img):
     roi = binary_img > 0
@@ -116,40 +110,42 @@ and the raw image instead of just the prediction
 def get_prediction(file, unet, pred_patch_size, pred_path, ecofab):
     prediction = predict_step(file, unet, pred_patch_size)[0, :, :]
     pred = transform_pred_to_annot(prediction.numpy().squeeze().astype(np.uint8))
-    pred_img, mask = elliptical_crop(pred, 1000, 1500, width=1400, height=2240)
-    binary_mask = createBinaryAnnotation(mask).astype(np.uint8)
-    io.imsave(os.path.join(pred_path, file.split(ecofab + '/')[1][:-4] + ".png"), binary_mask, check_contrast=False)
+    # pred_img, mask = elliptical_crop(pred, 1000, 1500, width=1400, height=2240)
+    binary_mask = createBinaryAnnotation(pred).astype(np.uint8) # Long Tensor for integers
+    io.imsave(os.path.join(pred_path, os.path.basename(file).split('.')[0] + ".png"), binary_mask, check_contrast=False)
 
 def main():
     parser = argparse.ArgumentParser(description='Description of your program')
     parser.add_argument("--config_file", type=str,
-                        default="/Users/zinebsordo/Desktop/berkeleylab/zineb/monai_unet2D/setup_files/setup-predict2d.json",
+                        default="./setup_files/setup-predict2d.json",
                         help="json file contraining data parameters")
     parser.add_argument("--gpus", type=int, default=None, help="how many gpus to use")
     args = parser.parse_args()
-
     args = _parse_training_variables(args)
+
+
+    pred_data_dir = args['pred_data_dir']
+    pred_path = args['pred_path']
+    
     # Looping through all ecofab folders in the pred_data_dir directory
-    for ecofolder in sorted(os.listdir(args['pred_data_dir'])):
-        if ecofolder.startswith("eco"):
+    for ecofab in sorted(os.listdir(pred_data_dir)):
+        if not ecofab.startswith("."):
 
-            print("Predicting for {}".format(ecofolder))
-
-            pred_data_dir = os.path.join(args['pred_data_dir'], ecofolder)
-            pred_path = os.path.join(args['pred_path'], ecofolder)
-
-            if not os.path.exists(pred_path):
-                os.makedirs(pred_path)
-
+            print("Predicting for {}".format(ecofab))
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             unet = Unet2D.load_from_checkpoint(args['model_path']).to(device)
             unet.eval()
 
-            lst_files = sorted(os.listdir(pred_data_dir))
-            for file in tqdm(lst_files):
-                if not file.startswith("."):
-                    file_path = os.path.join(pred_data_dir, file)
-                    get_prediction(file_path, unet, args['pred_patch_size'], pred_path, ecofolder)
+            if os.path.isdir(os.path.join(pred_data_dir, ecofab)): #if you have a timeseries of one ecofab 
+                os.makedirs(os.path.join(pred_path, ecofab), exist_ok=True)
+                lst_files = sorted(os.listdir(os.path.join(pred_data_dir, ecofab)))
+                for file in tqdm(lst_files):
+                    if not file.startswith("."):
+                        file_path = os.path.join(pred_data_dir, ecofab, file)
+                        get_prediction(file_path, unet, args['pred_patch_size'], os.path.join(pred_path, ecofab))
+            else:
+                file_path = os.path.join(pred_data_dir, ecofab)
+                get_prediction(file_path, unet, args['pred_patch_size'], pred_path)
 
 
 def _parse_training_variables(argparse_args):
