@@ -6,21 +6,24 @@ from argparse import ArgumentParser
 import torch
 import glob
 import pytorch_lightning as pl
+from utils import get_weights, transform_pred_to_annot, transform_annot, elliptical_crop, createBinaryAnnotation
 from skimage import io, color
+import metrics
 
-from unet2D import Unet2D, ImageDataset, PredDataset2D
+from pytorch_lightning.strategies import DDPStrategy
+from unet2D import ImageDataset, PredDataset2D, Unet2D
 from simpleLogger import mySimpleLogger
 from monai.data import list_data_collate
 from pytorch_lightning.loggers import NeptuneLogger
+from lightning.pytorch.loggers import WandbLogger 
 
 
 def main():
     parser = ArgumentParser(conflict_handler='resolve')
     parser.add_argument("--config_file", type=str,
-                        default="/Users/zinebsordo/Desktop/berkeleylab/zineb/monai_unet2D/setup_files/setup-unet2d.json",
+                        default="/home/zsordo/rhizonet-fovea/setup_files/setup-unet2d.json",
                         help="json file contraining data parameters")
-    parser.add_argument("--device", type=str, default='cpu', choices=['cpu', 'gpu'], help="choose cpu or gpu")
-    parser.add_argument("--nodes", type=int, default=1, help="number of gpu or cpu nodes")
+    parser.add_argument("--gpus", type=int, default=1, help="how many gpus to use")
     parser.add_argument("--strategy", type=str, default='ddp', help="pytorch strategy")
 
     args = parser.parse_args()
@@ -30,29 +33,33 @@ def main():
     data_dir, log_dir = model_params['data_dir'], model_params['log_dir']
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
-
-    '''The training data should be in folders names images and labels --> to specify in the readme file'''
+    
     images_dir, label_dir = data_dir + "/images", data_dir + "/labels"
+ 
     images, labels = [], []
-    # for f in os.listdir(images_dir): # if images are in subfolders e.g. in date subfolders
+    # for f in os.listdir(images_dir):
+        # images += sorted(glob.glob(os.path.join(images_dir, f, "*.tif")))
+        # labels += sorted(glob.glob(os.path.join(label_dir, f, "*.png")))
+
     images += sorted(glob.glob(os.path.join(images_dir, "*.tif")))
-    labels += sorted(glob.glob(os.path.join(label_dir,  "*.png")))
+    labels += sorted(glob.glob(os.path.join(label_dir, "*.png")))
 
     # randomly split data into train/val/test_masks
     train_len, val_len, test_len = np.cumsum(np.round(len(images) * np.array(dataset_params['data_split'])).astype(int))
     idx = np.random.permutation(np.arange(len(images)))
-
     train_images = [images[i] for i in idx[:train_len]]
     train_labels = [labels[i] for i in idx[:train_len]]
     val_images = [images[i] for i in idx[train_len:val_len]]
     val_labels = [labels[i] for i in idx[train_len:val_len]]
     test_images = [images[i] for i in idx[val_len:]]
     test_labels = [labels[i] for i in idx[val_len:]]
+
     # create datasets
     train_dataset = ImageDataset(train_images, train_labels, dataset_params, training=True)
-    val_dataset = ImageDataset(val_images, val_labels, dataset_params, )
-    test_dataset = ImageDataset(test_images, test_labels, dataset_params, )
+    val_dataset = ImageDataset(val_images, val_labels, dataset_params,)
+    test_dataset = ImageDataset(test_images, test_labels, dataset_params,)
 
+    
     # initialise the LightningModule
     unet = Unet2D(train_dataset, val_dataset, **model_params)
 
@@ -60,11 +67,13 @@ def main():
     # my_logger = mySimpleLogger(log_dir=log_dir,
     #                            keys=['val_acc', 'val_prec', 'val_recall', 'val_iou'])
 
-    neptune_logger = NeptuneLogger(
-        project="zsordo/Rhizonet",
-        api_key="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI5OTVlOGY4ZC05MmNjLTRiNTItOTU0Yy0wMzUxN2UyNDk4NmMifQ==",
-        log_model_checkpoints=False,
-    )
+    # neptune_logger = NeptuneLogger(
+    #     project="zsordo/Rhizonet",
+    #     api_key="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI5OTVlOGY4ZC05MmNjLTRiNTItOTU0Yy0wMzUxN2UyNDk4NmMifQ==",
+    #     log_model_checkpoints=False,
+    # )
+    wandb_logger = WandbLogger(log_model="all",
+                               project="rhizonet")
 
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         dirpath=log_dir,
@@ -88,9 +97,9 @@ def main():
         callbacks=[checkpoint_callback, lr_monitor, stopping_callback],
         log_every_n_steps=1,
         enable_checkpointing=True,
-        logger=neptune_logger,
-        accelerator=args['device'],
-        devices=args['nodes'],
+        logger=wandb_logger,
+        accelerator='gpu',
+        devices=args['gpus'],
         strategy=args['strategy'],
         num_sanity_val_steps=0,
         max_epochs=model_params['nb_epochs']
@@ -98,7 +107,7 @@ def main():
 
     # train
     trainer.fit(unet)
-
+    
     # test_masks
     test_loader = torch.utils.data.DataLoader(
         test_dataset, batch_size=model_params['batch_size'], shuffle=False,
@@ -106,7 +115,31 @@ def main():
         persistent_workers=True, pin_memory=torch.cuda.is_available())
     trainer.test(unet, test_loader, ckpt_path='best', verbose=True)
 
+    # predict and save
+    pred_img_path = os.path.join(model_params['pred_data_dir'], "images")
+    pred_lab_path = os.path.join(model_params['pred_data_dir'], "labels")
+    predict_dataset = PredDataset2D(pred_img_path, dataset_params)
+    predict_loader = torch.utils.data.DataLoader(
+        predict_dataset, batch_size=1, shuffle=False,
+        collate_fn=list_data_collate, num_workers=model_params["num_workers"],
+        persistent_workers=True, pin_memory=torch.cuda.is_available())
+    
+    predictions = trainer.predict(unet, predict_loader)
+    # save predictions
+    pred_path = os.path.join(log_dir, 'predictions')
+    if not os.path.exists(pred_path):
+        os.makedirs(pred_path)
+    for (pred, _, fname) in predictions:
+        pred = transform_pred_to_annot(pred.numpy().squeeze().astype(np.uint8))
+        fname = os.path.basename(fname[0]).replace('tif', 'png')
+        # pred_img, mask = elliptical_crop(pred, 1000, 1500, width=1400, height=2240)
+        # binary_mask = createBinaryAnnotation(pred).numpy().squeeze().astype(np.uint8)
+        binary_mask = createBinaryAnnotation(pred).squeeze().astype(np.uint8)
+        io.imsave(os.path.join(pred_path, fname), binary_mask, check_contrast=False)
 
+# Evaluate metrics on full size test images using metrics.py 
+    metrics.main(pred_path, pred_lab_path, log_dir)
+        
 def _parse_training_variables(argparse_args):
     """ Merges parameters from json config file and argparse, then parses/modifies parameters a bit"""
     args = vars(argparse_args)
@@ -115,10 +148,14 @@ def _parse_training_variables(argparse_args):
         config_dict = json.load(file_json)
         args.update(config_dict)
     dataset_args, model_args = args['dataset_params'], args['model_params']
-    dataset_args['patch_size'] = tuple(dataset_args['patch_size'])  # tuple expected, not list
-    model_args['pred_patch_size'] = tuple(model_args['pred_patch_size'])  # tuple expected, not list
+    dataset_args['patch_size'] = tuple(dataset_args['patch_size']) # tuple expected, not list
+    model_args['pred_patch_size'] = tuple(model_args['pred_patch_size']) # tuple expected, not list
+    if args['gpus'] is None:
+        args['gpus'] = -1 if torch.cuda.is_available() else 0
+
     return args, dataset_args, model_args
 
 
 if __name__ == "__main__":
     main()
+
