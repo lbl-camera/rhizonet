@@ -41,7 +41,7 @@ def crop_training_images(args):
 
     for i in tqdm(train_idx):
         image, label = io.imread(path_images[i]), io.imread(path_labels[i])
-        image_patch_size = args['train_patch_size'] + (3,)
+        image_patch_size = args['train_patch_size'] + (3,) # 4 for volumetric data 
         image_step_size = args['step_size'] + (3,)
 
         img_crop = np.vstack(
@@ -50,11 +50,12 @@ def crop_training_images(args):
         print(args['train_patch_size'],args['step_size'])
         label_crop = np.vstack(
             util.view_as_windows(label, window_shape=args['train_patch_size'], step=args['step_size']))
+        print(label_crop.shape)
 
         for j, (img, lab) in enumerate(zip(img_crop, label_crop)):
             if (np.count_nonzero(lab) / lab.size) > args['min_labeled']:
-                f_img = path_images[i].split('/')[-1].split('.tif')[0]
-                f_label = path_labels[i].split('/')[-1].split('.png')[0]
+                f_img = os.path.basename(path_images[i]).split('.')[0]
+                f_label = os.path.basename(path_labels[i]).split('.')[0]
 
                 fname_img = f"{f_img}_img_{i:04d}_crop-{j:04d}.tif"
                 fname_label = f"{f_label}_img_{i:04d}_crop-{j:04d}.png"
@@ -72,8 +73,8 @@ def crop_training_images(args):
 
             for i in tqdm(pred_idx):
                 image, label = io.imread(path_images[i]), io.imread(path_labels[i])
-                f_img = path_images[i].split('/')[-1]
-                f_label = path_labels[i].split('/')[-1]
+                f_img = os.path.basename(path_images[i])
+                f_label = os.path.basename(path_labels[i])
 
                 io.imsave(os.path.join(pred_image_dir, f_img), util.img_as_ubyte(image))
                 io.imsave(os.path.join(pred_label_dir, f_label), util.img_as_ubyte(label))
@@ -96,7 +97,7 @@ def parse_prepare_variables(argparse_args):
 def main():
     parser = ArgumentParser(conflict_handler='resolve', description="Patch cropping parameter setting")
     parser.add_argument("--config_file", type=str,
-                        default="/Users/zinebsordo/Desktop/berkeleylab/zineb/monai_unet2D/setup_files/setup-prepare.json",
+                        default="./setup_files/setup-prepare.json",
                         help="json file contraining data parameters")
     args = parser.parse_args()
     args = parse_prepare_variables(args)
