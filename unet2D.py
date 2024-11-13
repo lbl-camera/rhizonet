@@ -159,14 +159,13 @@ class ImageDataset(Dataset):
             return self.transform(self.data_dicts[idx])
 
     # These transforms define the data preprocessing and augmentations done to the raw images BEFORE input to neural network
-    def get_data_transforms(self, training, amax):
+    def get_data_transforms(self, training, amax, boundingbox, dilation, disk_dilation):
         if not training:  # validation or test_masks set -- no image augmentation
             transform = Compose(
                 [
-                    tiff_reader(keys=["image", "label"], image_col=self.image_col),
+                    tiff_reader(keys=["image", "label"], image_col=self.image_col, boundingbox=boundingbox, dilation=dilation, disk_dilation=disk_dilation),
                     # AddChanneld(keys=["label"]),  # shape of label is (3000, 2039) but DEPRECATED for monai 1.3.2
                     # AsChannelFirstd(keys=["image"]), # shape of raw image is (3000, 2039, 3) RGB becomes (3, 3000, 2039)
-                    
                     # SpatialPadd(keys=["image", "label"], spatial_size=self.target_size),
 #                         CenterSpatialCropd(
 #                             keys=["image", "label"],
@@ -191,8 +190,8 @@ class ImageDataset(Dataset):
         else:  # training set -- do image augmentation
             transform = Compose(
                 [
-                    tiff_reader(keys=["image", "label"], image_col=self.image_col),
-                    # AddChanneld(keys=["label"]),
+                    tiff_reader(keys=["image", "label"], image_col=self.image_col, boundingbox=boundingbox, dilation=dilation, disk_dilation=disk_dilation),
+                    # AddChanneld(keys=["label"]), # deprecated for monai 1.3.2
                     # AsChannelFirstd(keys=["image"]),
                     # shape of raw image is (3000, 2039, 3) RGB becomes (3, 3000, 2039)
                    
