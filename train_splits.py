@@ -8,6 +8,7 @@ import glob
 import pytorch_lightning as pl
 from utils import get_weights, transform_pred_to_annot, transform_annot, elliptical_crop, createBinaryAnnotation
 from skimage import io, color
+import metrics
 
 from pytorch_lightning.strategies import DDPStrategy
 from unet2D import ImageDataset, PredDataset2D, Unet2D
@@ -20,7 +21,7 @@ from pytorch_lightning.loggers import NeptuneLogger, WandbLogger
 def main():
     parser = ArgumentParser(conflict_handler='resolve')
     parser.add_argument("--config_file", type=str,
-                        default="/home/zsordo/rhizonet-fovea/setup_files/setup-unet2d.json",
+                        default="./setup_files/setup-unet2d.json",
                         help="json file contraining data parameters")
     parser.add_argument("--gpus", type=int, default=1, help="how many gpus to use")
     parser.add_argument("--strategy", type=str, default='ddp', help="pytorch strategy")

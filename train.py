@@ -21,7 +21,7 @@ from lightning.pytorch.loggers import WandbLogger
 def main():
     parser = ArgumentParser(conflict_handler='resolve')
     parser.add_argument("--config_file", type=str,
-                        default="/home/zsordo/rhizonet-fovea/setup_files/setup-unet2d.json",
+                        default="./setup_files/setup-unet2d.json",
                         help="json file contraining data parameters")
     parser.add_argument("--gpus", type=int, default=1, help="how many gpus to use")
     parser.add_argument("--strategy", type=str, default='ddp', help="pytorch strategy")
@@ -37,10 +37,6 @@ def main():
     images_dir, label_dir = data_dir + "/images", data_dir + "/labels"
  
     images, labels = [], []
-    # for f in os.listdir(images_dir):
-        # images += sorted(glob.glob(os.path.join(images_dir, f, "*.tif")))
-        # labels += sorted(glob.glob(os.path.join(label_dir, f, "*.png")))
-
     images += sorted(glob.glob(os.path.join(images_dir, "*.tif")))
     labels += sorted(glob.glob(os.path.join(label_dir, "*.png")))
 
