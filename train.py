@@ -25,6 +25,7 @@ def main():
                         help="json file contraining data parameters")
     parser.add_argument("--gpus", type=int, default=1, help="how many gpus to use")
     parser.add_argument("--strategy", type=str, default='ddp', help="pytorch strategy")
+    parser.add_argument("--accelerator", type=str, default='gpu', help="cpu or gpu accelerator")
 
     args = parser.parse_args()
 
@@ -94,7 +95,7 @@ def main():
         log_every_n_steps=1,
         enable_checkpointing=True,
         logger=wandb_logger,
-        accelerator='gpu',
+        accelerator=args['accelerator'],
         devices=args['gpus'],
         strategy=args['strategy'],
         num_sanity_val_steps=0,

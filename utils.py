@@ -45,7 +45,7 @@ def extract_largest_component_bbox_image(img, lab=None, predict=False):
     cropped_image = img[..., min_row:max_row, min_col:max_col]
     # Create a new image with the cropped content
     new_image = np.zeros_like(cropped_image)
-    new_image[..., filled_largest_component_mask[min_row:max_row, min_col:max_col]] = cropped_image[:,
+    new_image[..., filled_largest_component_mask[min_row:max_row, min_col:max_col]] = cropped_image[...,
         filled_largest_component_mask[min_row:max_row, min_col:max_col]]
     
     if lab is not None:
@@ -196,12 +196,17 @@ def createBinaryAnnotation(img):
     if isinstance(img, torch.Tensor):
         u = torch.unique(img)
         bkg = torch.zeros(img.shape)  # background
-        frg = (img == u[2]).int() * 255
-        # frg = (img == u[1]).int() * 255
+        try: 
+            frg = (img == u[2]).int() * 255
+        except: 
+            frg = (img == u[1]).int() * 255    
     elif isinstance(img, np.ndarray):
         u = np.unique(img)
         bkg = np.zeros(img.shape)  # background
-        frg = (img == u[2]).astype(int) * 255
+        try: 
+            frg = (img == u[2]).astype(int) * 255
+        except: 
+            frg = (img == u[1]).astype(int) * 255    
     else:
         raise TypeError("Input should be a PyTorch tensor or a NumPy array.")
     return bkg + frg
