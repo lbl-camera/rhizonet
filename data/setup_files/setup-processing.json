@@ -1,0 +1,7 @@
+{
+  "output_path": "/home/zsordo/rhizonet-package/rhizonet/inference/training_resnet_patches64/masked_chull_64_test",
+  "data_path": "/home/zsordo/rhizonet-package/rhizonet/inference/training_resnet_patches64/prediction_64_test",
+  "area_closing": 200,
+  "area_opening": 500,
+  "disk_radius":4
+}
