@@ -21,7 +21,7 @@ from rhizonet import _version
 
 # -- Project information -----------------------------------------------------
 
-project = 'rhizonet'
+project = 'RhizoNet'
 
 copyright = f'{datetime.now().year}, ' + 'Zineb Sordo'
 author = 'Zineb Sordo'

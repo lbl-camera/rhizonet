@@ -40,7 +40,7 @@ setup(
     name='rhizonet',
     packages=find_packages(include=['rhizonet', 'rhizonet.*']),
     test_suite='tests',
-    url='https://github.com/zineb-sordo/rhizonet',
+    url='https://github.com/lbl-camera/rhizonet',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     zip_safe=False,
