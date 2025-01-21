@@ -22,7 +22,7 @@ nibabel==5.2.1
 numpy
 oauthlib==3.2.2
 opencv-python==4.8.1.78
-pandas==2.1.1
+pandas
 Pillow==9.3.0
 pytest
 pytorch-lightning==2.0.9.post0
