@@ -106,14 +106,14 @@ def train_model(args):
 
     # Split data into training, validation and test sets
     train_len, val_len, test_len = np.cumsum(np.round(len(images) * np.array(dataset_params['data_split'])).astype(int))
-    idx = np.random.permutation(np.arange(len(images)))[:1000]
+    idx = np.random.permutation(np.arange(len(images)))
 
-    train_images = [images[i] for i in idx[:train_len]]
-    train_labels = [labels[i] for i in idx[:train_len]]
-    val_images = [images[i] for i in idx[train_len:val_len]]
-    val_labels = [labels[i] for i in idx[train_len:val_len]]
-    test_images = [images[i] for i in idx[val_len:]]
-    test_labels = [labels[i] for i in idx[val_len:]]
+    train_images = [images[i] for i in idx[:train_len]][:100]
+    train_labels = [labels[i] for i in idx[:train_len]][:100]
+    val_images = [images[i] for i in idx[train_len:val_len]][:100]
+    val_labels = [labels[i] for i in idx[train_len:val_len]][:100]
+    test_images = [images[i] for i in idx[val_len:]][:100]
+    test_labels = [labels[i] for i in idx[val_len:]][:100]
     
     # Create datasets
     train_dataset = ImageDataset(train_images, train_labels, dataset_params, training=True)
