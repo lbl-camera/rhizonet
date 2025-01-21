@@ -14,7 +14,7 @@ lightning-cloud==0.5.39
 lightning-utilities==0.9.0
 Markdown==3.4.4
 markdown-it-py==3.0.0
-matplotlib==3.8.0
+matplotlib
 monai==0.9.1
 neptune==1.8.1
 networkx==3.1
