@@ -1,10 +1,3 @@
-<!-- ---
-banner: _static/ecofab.png
-banner_height: "40vh"
---- -->
-
-
-
 # Welcome to RhizoNet Documentation
 
 ![Project Logo](./_static/ecofab.png)
@@ -26,14 +19,11 @@ Learn more about the project on [GitHub](https://github.com/lbl-camera/rhizonet)
 
 ## 📚 Table of Contents
 
-- [Introduction](introduction.md): Learn the basics of Project Name.
-- [Getting Started](getting-started.md): Step-by-step guide to set up and start using Project Name.
 
 
 ```{toctree}
 ---
 maxdepth: 2
-caption: RhizoNet
 ---
 api/utils.md
 api/prepare_patches.md
@@ -52,7 +42,7 @@ api/metrics.md
 
 ## 🔧 Installation
 
-To install RhizoNet, use:
+To install RhizoNet, run the following command line:
 
 ```bash
 pip install rhizonet

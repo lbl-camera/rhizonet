@@ -142,8 +142,7 @@ def predict_step(
             - casting the tensor to torch.uint8 (byte) and scaling to 255 for visualization
     """
     image, _ = transform_image(image_path)
-    print(image.shape, "image shape")
-    cropped_image = extract_largest_component_bbox_image(image, lab=None)
+    cropped_image = extract_largest_component_bbox_image(image.unsqueeze(0), lab=None)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tensor_cropped_image = torch.tensor(cropped_image).to(device)
     logits = pred_function(tensor_cropped_image.float(), model, pred_patch_size)

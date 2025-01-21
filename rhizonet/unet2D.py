@@ -526,7 +526,8 @@ class Unet2D(pl.LightningModule):
 
     def predict_step(self, batch, batch_idx):
         images, fnames = batch
-        logits = self.pred_function(images.squeeze(0))
+        print(images.shape, "images.shape")
+        logits = self.pred_function(images)
         # cropped_images = extract_largest_component_bbox_image(images)
         # tensor_cropped_images = torch.tensor(cropped_images).to("cuda")
         logits = self.pred_function(logits)
