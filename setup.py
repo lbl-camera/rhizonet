@@ -16,6 +16,16 @@ with open(path.join(here, 'requirements.txt')) as requirements_file:
     requirements = [line for line in requirements_file.read().splitlines()
                     if not line.startswith('#')]
 
+with open(path.join(here, 'requirements-dev.txt')) as requirements_file:
+    # Parse requirements.txt, ignoring any commented-out lines.
+    dev = [line for line in requirements_file.read().splitlines()
+           if not line.startswith('#')]
+
+with open(path.join(here, 'requirements-docs.txt')) as requirements_file:
+    # Parse requirements.txt, ignoring any commented-out lines.
+    docs = [line for line in requirements_file.read().splitlines()
+            if not line.startswith('#')]
+
 setup(
     author="Zineb Sordo",
     author_email='zsordo@lbl.gov',
