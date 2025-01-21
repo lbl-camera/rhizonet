@@ -1,0 +1,20 @@
+ignore:
+  - "rhizonet/_version.py"
+  - "setup.py"
+  - "versioneer.py"
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        paths:
+          - "rhizonet"
+        informational: true
+    patch:
+      default:
+        target: auto
+        paths:
+          - "rhizonet"
+        informational: true
+
