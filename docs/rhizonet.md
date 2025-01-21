@@ -1,4 +1,0 @@
- 
-# rhizonet module
-
-::: rhizonet.rhizonet
