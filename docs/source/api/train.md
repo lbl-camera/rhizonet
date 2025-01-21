@@ -2,7 +2,7 @@
 
 
 # Train Model
----------------------
+
 ```{eval-rst}
 .. automodule:: rhizonet.train
    :members:
