@@ -188,11 +188,18 @@ def train_model(args):
         pred = pred.numpy().squeeze().astype(np.uint8)
         fname = os.path.basename(fname[0]).split('.')[0] + ".png"
         # pred_img, mask = elliptical_crop(pred, 1000, 1500, width=1400, height=2240)
-        binary_mask = createBinaryAnnotation(pred).squeeze().astype(np.uint8)
-        io.imsave(os.path.join(pred_path, fname), binary_mask, check_contrast=False)
+        if dataset_params['binary_preds']:
+            binary_mask = createBinaryAnnotation(pred).squeeze().astype(np.uint8)
+            io.imsave(os.path.join(pred_path, fname), binary_mask, check_contrast=False)
+        else:
+            io.imsave(os.path.join(pred_path, fname), pred.squeeze().astype(np.unint8), check_contrast=False)
+
 
     # Evaluate metrics on full size test images 
-    evaluate(pred_path, pred_lab_path, log_dir)
+    if dataset_params['binary_preds']:
+        evaluate(pred_path, pred_lab_path, log_dir, task='binary')
+    else:
+        evaluate(pred_path, pred_lab_path, log_dir, task='multiclass')
         
 
 if __name__ == "__main__":

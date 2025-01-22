@@ -41,6 +41,7 @@
     "image_col": "None",
     "boundingbox": false,
     "dilation": false,
-    "disk_dilation": 2
+    "disk_dilation": 2,
+    "binary_pred": true
   }
 }
