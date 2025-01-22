@@ -24,6 +24,7 @@ def test_parse_variable():
     argparse_args = parser.parse_args()
     args, dataset_args, model_args = _parse_training_variables(argparse_args)
 
+    assert os.path.exists(args['config_file'])
     assert isinstance(dataset_args['patch_size'], tuple)
     assert isinstance(model_args['pred_patch_size'], tuple)
 
@@ -132,8 +133,10 @@ def test_training_validation_step():
         val_logs = model.validation_step(batch, batch_idx=0)
         assert "loss" in val_logs, "Validation step should log loss"
 
-        os.remove("train_tensor.pt")
-        os.remove("network_graph.png")
+        if os.path.exists("train_tensor.pt"):
+            os.remove("train_tensor.pt")
+        if os.path.exists("network_graph.png"):
+            os.remove("network_graph.png")
 
 
 def test_prediction_function():

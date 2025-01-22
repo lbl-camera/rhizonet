@@ -38,7 +38,7 @@ def test_get_prediction():
     mock_model = MagicMock()
     mock_model.return_value = torch.randn(1, 3, 128, 128)  # Mock logits output
 
-    get_prediction(test_file, mock_model, (128, 128), save_path, labels=[1, 0])
+    get_prediction(test_file, mock_model, (128, 128), save_path, labels=[1, 0], binary_preds=True)
 
     saved_file = os.path.join(save_path, os.path.basename(test_file).split('.')[0] + ".png")
     assert os.path.exists(saved_file), "Prediction output not saved."

@@ -5,7 +5,10 @@ import torch
 import numpy as np
 from tempfile import TemporaryDirectory
 from skimage import io
-from rhizonet.metrics import calculate_all_metrics, evaluate
+try: 
+    from .rhizonet.metrics import calculate_all_metrics, evaluate
+except ImportError:
+    from rhizonet.metrics import calculate_all_metrics, evaluate
 
 # Sample prediction and groundtruth data
 @pytest.fixture
@@ -27,7 +30,6 @@ def sample_data():
 # Test the metric calculation function
 def test_calculate_all_metrics(sample_data):
     pred, target = sample_data
-    print(pred, target)
     acc, prec, rec, iou, dice = calculate_all_metrics(pred, target, task="binary", num_classes=2)
 
     # Expected results
@@ -66,7 +68,7 @@ def test_evaluate():
         io.imsave(pred_path1, pred1)
         io.imsave(label_path1, label1)
 
-        evaluate(pred_dir, label_dir, log_dir, task="binary")
+        evaluate(pred_dir, label_dir, log_dir, task="binary", num_classes=2)
 
         # Check that the metrics file is created
         metrics_path = os.path.join(log_dir, "metrics.json")
