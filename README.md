@@ -5,7 +5,7 @@
 [![PyPI](https://badgen.net/pypi/v/rhizonet)](https://pypi.org/project/rhizonet/)
 [![License](https://badgen.net/pypi/license/rhizonet)](https://github.com/lbl-camera/rhizonet)
 [![Build Status](https://github.com/lbl-camera/rhizonet/actions/workflows/rhizonet-CI.yml)](https://github.com/lbl-camera/rhizonet/actions/workflows/rhizonet-CI.yml)
-[![Documentation Status](https://rhizonet.readthedocs.io/en/latest/)](https://rhizonet.readthedocs.io/en/latest/)
+[![Documentation Status](https://readthedocs.org/projects/rhizonet/badge/?version=latest)](https://rhizonet.readthedocs.io/en/latest/)
 [![codecov](https://codecov.io/github/lbl-camera/rhizonet/graph/badge.svg?token=CuKaQXQLkt)](https://codecov.io/github/lbl-camera/rhizonet)
 
 Segmentation pipeline for EcoFAB images
