@@ -42,6 +42,6 @@
     "boundingbox": false,
     "dilation": false,
     "disk_dilation": 2,
-    "binary_pred": true
+    "binary_preds": true
   }
 }
