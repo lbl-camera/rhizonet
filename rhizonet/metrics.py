@@ -63,7 +63,7 @@ def calculate_all_metrics(pred: torch.Tensor,
     return acc.item(), precision.item(), recall.item(), iou.item(), dice.item()
 
 
-def evaluate(pred_path: str, label_path: str, log_dir: str, task: str) -> None:
+def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_classes: int) -> None:
     """
     Reads the prediction and groundtruth images, evaluates the metrics Accuracy, Precision, Recall and IOU.
     Saves results in `metrics.json` file in the specified `log_dir`. 
@@ -75,6 +75,7 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str) -> None:
         pred_path (str): filepath of the predicted image
         label_path (str): filepath of the groundtruth image
         log_dir (str): filepath where results will be saved in a json file
+        num_classes (int): number of class labels
         task (int): type of segmentation task if processing binary segmentation masks or multiclass segmentation images (e.g. `binary` or `multiclass`)
     """
     pred_list = sorted([os.path.join(pred_path, e) for e in os.listdir(pred_path) if not e.startswith(".")])
@@ -82,7 +83,7 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str) -> None:
     dict_metrics = {}
 
 
-    # if number of classes in the prediction is 2 then binary else multiclass with number of classes = len(labels)
+    # if number of classes in the prediction is 2 then binary else multiclass with number of classes 
     for pred_path, lab_path in zip(pred_list, label_list):
         pred = io.imread(pred_path) # Predicted image 
         lab = io.imread(lab_path) # Groundtruth image
@@ -90,9 +91,6 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str) -> None:
         # Check if prediction is scaled by 255 for visualization 
         if np.min(pred) >= 0 and np.max(pred) == 255:
             pred = torch.Tensor(pred/255.0)
-
-        labels = np.unique(pred)
-        num_classes = len(labels)
 
         pred = torch.tensor(pred)
         lab = torch.tensor(lab) 
@@ -127,7 +125,10 @@ if __name__ == '__main__':
                         default='binary',
                         choices=['binary', 'multiclass'],
                         help="type of segmentation task if processing binary segmentation masks or multiclass segmentation images")
+    parser.add_argument("--num_classes",
+                        default=2,
+                        help="Number of classes including background")
     args = parser.parse_args()
     args = vars(args)
-    evaluate(args['pred_path'], args ['label_path'], args['log_dir'], args['task'])
+    evaluate(args['pred_path'], args ['label_path'], args['log_dir'], args['task'], args['num_classes'])
 

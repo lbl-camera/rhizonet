@@ -156,7 +156,8 @@ def get_prediction(
         unet: Callable,
         pred_patch_size: Sequence[int], 
         save_path: str, 
-        labels: Sequence[int]):
+        labels: Sequence[int],
+        binary_preds: bool):
     """
     Convert the prediction to a binary segmentation mask and saves the image in the ``save_path`` filepath specified in the configuration file.
 
@@ -166,14 +167,18 @@ def get_prediction(
         pred_patch_size (Sequence[int]): spatial window size for inference
         save_path (str): path in which the predictions will be saved
         labels (Sequence[int]): the labels used for annotating the groundtruth
+        binary_preds (bool): generate binary predictions (e.g. root vs background) or keep all class labels
     """
 
     prediction = predict_step(file, unet, pred_patch_size).squeeze(0)
     prediction = MapImage(prediction, labels)
     pred = prediction.cpu().numpy().squeeze().astype(np.uint8)
     # pred_img, mask = elliptical_crop(pred, 1000, 1500, width=1400, height=2240)
-    binary_mask = createBinaryAnnotation(pred).astype(np.uint8)
-    io.imsave(os.path.join(save_path, os.path.basename(file).split('.')[0] + ".png"), binary_mask, check_contrast=False)
+    if binary_preds:
+        binary_mask = createBinaryAnnotation(pred).astype(np.uint8)
+        io.imsave(os.path.join(save_path, os.path.basename(file).split('.')[0] + ".png"), binary_mask, check_contrast=False)
+    else:
+        io.imsave(os.path.join(save_path, os.path.basename(file).split('.')[0] + ".png"), pred.astype(np.unint8), check_contrast=False)
 
 
 def predict_model(args: Dict):
@@ -187,6 +192,7 @@ def predict_model(args: Dict):
     pred_data_dir = args['pred_data_dir']
     save_path = args['save_path']
     labels = args['labels']
+    binary_preds = args['binary_preds']
     
     # Looping through all ecofab folders in the pred_data_dir directory
     for ecofab in sorted(os.listdir(pred_data_dir)):
@@ -203,11 +209,11 @@ def predict_model(args: Dict):
                     if not file.startswith("."):
                         print("Predicting for {}".format(file))
                         file_path = os.path.join(pred_data_dir, ecofab, file)
-                        get_prediction(file_path, unet, args['pred_patch_size'], os.path.join(save_path, ecofab), labels)
+                        get_prediction(file_path, unet, args['pred_patch_size'], os.path.join(save_path, ecofab), labels, binary_preds)
             else:
                 print("Predicting for {}".format(ecofab))
                 file_path = os.path.join(pred_data_dir, ecofab)
-                get_prediction(file_path, unet, args['pred_patch_size'], save_path, labels)
+                get_prediction(file_path, unet, args['pred_patch_size'], save_path, labels, binary_preds)
 
 
 if __name__ == '__main__':

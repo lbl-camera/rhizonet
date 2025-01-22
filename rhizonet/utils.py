@@ -265,18 +265,25 @@ def createBinaryAnnotation(img: Union[np.ndarray, torch.Tensor]) -> Union[np.nda
     if isinstance(img, torch.Tensor):
         u = torch.unique(img)
         bkg = torch.zeros(img.shape)  # background
-        try: 
-            frg = (img == u[2]).int() * 255
-        except: 
-            frg = (img == u[1]).int() * 255    
+        if len(u) == 1:
+            print("This prediction only contains background")
+            return img
+        else:
+            try: 
+                frg = (img == u[2]).int() * 255
+            except: 
+                frg = (img == u[1]).int() * 255    
     elif isinstance(img, np.ndarray):
         u = np.unique(img)
         bkg = np.zeros(img.shape)  # background
-        print(u, "u")
-        try: 
-            frg = (img == u[2]).astype(int) * 255
-        except: 
-            frg = (img == u[1]).astype(int) * 255    
+        if len(u) == 1:
+            print("This prediction only contains background")
+            return img
+        else:
+            try: 
+                frg = (img == u[2]).astype(int) * 255
+            except: 
+                frg = (img == u[1]).astype(int) * 255    
     else:
         raise TypeError("Input should be a PyTorch tensor or a NumPy array.")
     return bkg + frg

@@ -3,5 +3,6 @@
   "pred_data_dir": "/home/zsordo/datasets/test_data/images",
   "save_path": "/home/zsordo/rhizonet-package/rhizonet/inference/training_resnet_patches64/prediction_64_test",
   "labels": [0, 85, 170],
-  "pred_patch_size": [64, 64]
+  "pred_patch_size": [64, 64],
+  "binary_preds": true
 }
