@@ -2,8 +2,8 @@
 
 
 
-[![PyPI](https://badgen.net/pypi/v/berteley)](https://pypi.org/project/berteley/)
-[![License](https://badgen.net/pypi/license/berteley)](https://github.com/lbl-camera/rhizonet)
+[![PyPI](https://badgen.net/pypi/v/rhizonet)](https://pypi.org/project/rhizonet/)
+[![License](https://badgen.net/pypi/license/rhizonet)](https://github.com/lbl-camera/rhizonet)
 [![Build Status](https://github.com/lbl-camera/rhizonet/blob/main/.github/workflows/rhizonet-CI.yml)](https://github.com/lbl-camera/rhizonet/blob/main/.github/workflows/rhizonet-CI.yml)
 [![Documentation Status](https://rhizonet.readthedocs.io/en/latest/)](https://rhizonet.readthedocs.io/en/latest/)
 [![codecov](https://codecov.io/github/lbl-camera/rhizonet/graph/badge.svg?token=CuKaQXQLkt)](https://codecov.io/github/lbl-camera/rhizonet)
