@@ -272,6 +272,7 @@ def createBinaryAnnotation(img: Union[np.ndarray, torch.Tensor]) -> Union[np.nda
     elif isinstance(img, np.ndarray):
         u = np.unique(img)
         bkg = np.zeros(img.shape)  # background
+        print(u, "u")
         try: 
             frg = (img == u[2]).astype(int) * 255
         except: 
