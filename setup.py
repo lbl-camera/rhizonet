@@ -27,7 +27,7 @@ with open(path.join(here, 'requirements-docs.txt')) as requirements_file:
             if not line.startswith('#')]
 
 setup(
-    author="Zineb Sordo",
+    author="Zineb Sordo, Daniela Ushizima, Peter Andeer, James Sethian and Trent Northen.",
     author_email='zsordo@lbl.gov',
     python_requires='>=3.8',
     classifiers=[
@@ -57,5 +57,6 @@ setup(
     extras_require={
         'tests': ['pytest', 'codecov', 'pytest-cov'],
         'docs': ['sphinx', 'sphinx-rtd-theme', 'myst-parser', 'myst-nb', 'sphinx-panels', 'autodocs']
-    }
+    },
+    setup_requires=["wheel"]
 )
