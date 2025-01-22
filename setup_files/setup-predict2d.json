@@ -1,6 +1,0 @@
-{
-  "model_path": "/Users/zinebsordo/Desktop/berkeleylab/zineb/monai_unet2D/deprecated/results/checkpoint-epoch=31-val_loss=0.63.ckpt",
-  "pred_data_dir": "/Users/zinebsordo/Desktop/berkeleylab/data/timeseries_data/EX005/raw_data",
-  "pred_patch_size": [64, 64],
-  "pred_path": "/Users/zinebsordo/Desktop/berkeleylab/data/timeseries_data/EX005/test_ellipse"
-}

@@ -1,0 +1,47 @@
+{
+  "model_params":
+  {
+    "image_dir": "/home/zsordo/datasets/data/patches64_dilated/images",
+    "label_dir": "/home/zsordo/datasets/data/patches64_dilated/labels",
+    "pred_data_dir": "/home/zsordo/datasets/test_data",
+    "log_dir": "./results/training_resnet_patches64",
+    "input_channels": 3,
+    "class_values": [0, 85, 170],
+    "spatial_dims": 2, 
+    "pred_patch_size": [
+      64,
+      64
+    ],
+    "task": "multiclass",
+    "background_index": 0,
+    "num_classes": 3,
+    "model": "resnet",
+    "batch_size": 8,
+
+    "lr": 3e-4,
+    "num_workers": 32,
+    "nb_epochs": 1
+  },
+  "dataset_params": {
+    "input_channels": 3,
+    "class_values": [0, 85, 170],
+    "data_split": [
+      0.8,
+      0.1,
+      0.1
+    ],
+    "translate_range": 0.2,
+    "rotate_range": 0.05,
+    "scale_range": 0.1,
+    "shear_range": 0.1,
+    "patch_size": [
+      64,
+      64
+    ],
+    "image_col": "None",
+    "boundingbox": false,
+    "dilation": false,
+    "disk_dilation": 2,
+    "binary_preds": true
+  }
+}

@@ -1,0 +1,6 @@
+sphinx
+sphinx-rtd-theme
+myst-parser
+myst-nb
+sphinx-panels
+autodocs

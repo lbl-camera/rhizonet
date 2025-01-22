@@ -1,7 +1,0 @@
-{
-  "output_path":"/Users/zinebsordo/Desktop/berkeleylab/data/timeseries_data/EX004/masked_chull_64_test",
-  "data_path": "/Users/zinebsordo/Desktop/berkeleylab/data/timeseries_data/EX004/prediction_64_test",
-  "area_closing": 200,
-  "area_opening": 500,
-  "disk_radius":4
-}
