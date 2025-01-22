@@ -522,14 +522,11 @@ class Unet2D(pl.LightningModule):
             writer.writerow(f"{acc:.02f}, {prec:.02f}, {recall:.02f}, {iou:.02f}")
 
     def pred_function(self, image):
-        print(image.shape, "image")
-        print(self.hparams.pred_patch_size, "roi_size")
         return sliding_window_inference(image, self.hparams.pred_patch_size, 1, self.forward)
 
     def predict_step(self, batch, batch_idx):
         images, fnames = batch
-        print(images.shape, "images.shape")
-        logits = self.pred_function(images.squeeze(0))
+        logits = self.pred_function(images.float())
         # cropped_images = extract_largest_component_bbox_image(images)
         # tensor_cropped_images = torch.tensor(cropped_images).to("cuda")
         logits = self.pred_function(logits)
