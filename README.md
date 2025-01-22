@@ -109,8 +109,6 @@ Please reference this work:
                 month    =  jun,
                 year     =  2024
                 }
-
-
       </pre>
     </div>
 
