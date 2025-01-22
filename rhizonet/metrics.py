@@ -88,6 +88,9 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_class
         pred = io.imread(pred_path) # Predicted image 
         lab = io.imread(lab_path) # Groundtruth image
 
+        if task == 'binary':
+            lab = createBinaryAnnotation(lab)
+            
         # Check if prediction is scaled by 255 for visualization 
         if np.min(pred) >= 0 and np.max(pred) == 255:
             pred = torch.Tensor(pred/255.0)
