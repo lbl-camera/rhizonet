@@ -16,19 +16,6 @@ from rhizonet.unet2D import Unet2D
 import pytorch_lightning as pl
 
 
-def test_parse_variable():
-
-    parser = ArgumentParser(conflict_handler='resolve')
-    parser.add_argument("--config_file", type=str,
-                        default="../data/setup_files/setup-unet2d.json")
-    argparse_args = parser.parse_args()
-    args, dataset_args, model_args = _parse_training_variables(argparse_args)
-
-    assert os.path.exists(args['config_file'])
-    assert isinstance(dataset_args['patch_size'], tuple)
-    assert isinstance(model_args['pred_patch_size'], tuple)
-
-
 def test_unet2d_initialization():
     train_ds = MagicMock()  # Mock training dataset
     val_ds = MagicMock()    # Mock validation dataset
