@@ -5,10 +5,8 @@ import torch
 import numpy as np
 from tempfile import TemporaryDirectory
 from skimage import io
-try: 
-    from .rhizonet.metrics import calculate_all_metrics, evaluate
-except ImportError:
-    from rhizonet.metrics import calculate_all_metrics, evaluate
+from rhizonet.metrics import calculate_all_metrics, evaluate
+
 
 # Sample prediction and groundtruth data
 @pytest.fixture
