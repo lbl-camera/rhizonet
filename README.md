@@ -2,7 +2,7 @@
 
 
 
-[![PyPI](https://badgen.net/pypi/v/rhizonet)](https://pypi.org/project/rhizonet/)
+[![PyPI](https://badgen.net/pypi/v/rhizonet?cache-bust=%3Ctimestamp%3E)](https://pypi.org/project/rhizonet/)
 [![License](https://badgen.net/pypi/license/rhizonet)](https://github.com/lbl-camera/rhizonet)
 <!-- [![Build Status](https://github.com/lbl-camera/rhizonet/actions/workflows/rhizonet-CI.yml)](https://github.com/lbl-camera/rhizonet/actions/workflows/rhizonet-CI.yml) -->
 [![Documentation Status](https://readthedocs.org/projects/rhizonet/badge/?version=latest)](https://rhizonet.readthedocs.io/en/latest/)
