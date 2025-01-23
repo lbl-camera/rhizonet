@@ -26,6 +26,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+          pip install -r requirements-docs.txt
           pip install -e .[tests]
 
       - name: Run tests
@@ -66,12 +68,7 @@ jobs:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
           verbose: true
-      - name: Upload to PyPI
-        run: |
-          twine upload dist/*
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}  # Use the stored PyPI username
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}  # Use the stored PyPI API token
+
       - name: Github Release
         uses: fnkr/github-action-ghr@v1
         env:

@@ -12,6 +12,8 @@ Pipeline for deep-learning based 2D image segmentation of plant root grown in Ec
 
 * License: MIT license
 * Documentation: https://rhizonet.readthedocs.io
+* Paper: https://www.nature.com/articles/s41598-024-63497-8
+
 
 ## Installation
 ```commandline
