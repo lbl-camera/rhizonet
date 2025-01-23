@@ -215,8 +215,8 @@ def predict_model(args: Dict):
                 file_path = os.path.join(pred_data_dir, ecofab)
                 get_prediction(file_path, unet, args['pred_patch_size'], save_path, labels, binary_preds)
 
+def main():
 
-if __name__ == '__main__':
     parser = argparse.ArgumentParser(conflict_handler='resolve', description='Run inference using trained model')
     parser.add_argument("--config_file", type=str,
                         default="setup_files/setup-predict.json",
@@ -224,4 +224,8 @@ if __name__ == '__main__':
     parser.add_argument("--gpus", type=int, default=None, help="how many gpus to use")
     args = parser.parse_args()
     args = _parse_training_variables(args)
+
     predict_model(args)
+
+if __name__ == '__main__':
+    main()

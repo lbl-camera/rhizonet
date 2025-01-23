@@ -202,7 +202,7 @@ def train_model(args):
         evaluate(pred_path, pred_lab_path, log_dir, task='multiclass', num_classes=args['num_classes'])
         
 
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser(conflict_handler='resolve')
     parser.add_argument("--config_file", type=str,
                         default="../data/setup_files/setup-unet2d.json",
@@ -214,4 +214,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     train_model(args)
+
+if __name__ == "__main__":
+    main()
 

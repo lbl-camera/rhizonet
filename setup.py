@@ -38,7 +38,11 @@ setup(
     description="Segmentation pipeline for EcoFAB images",
     entry_points={
         'console_scripts': [
-            #'rhizonet=rhizonet:some_function',
+            'train_rhizonet=rhizonet.train:main',
+            'predict_rhizonet=rhizonet.predict:main',
+            'postprocess_rhizonet=rhizonet.postprocessing:main',
+            'patchify_rhizonet=rhizonet.prepare_patches:main',
+            'evalmetrics_rhizonet=rhizonet.metrics:main',
         ],
     },
     install_requires=requirements,

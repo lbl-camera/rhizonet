@@ -151,8 +151,7 @@ def processing(data_path: str,
             io.imsave(pred_chull_dir, pred_eroded, check_contrast=False)
 
 
-
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(conflict_handler='resolve', description="Arguments for applying Convx Hull post processing to a set of binary masks")
     parser.add_argument("--config_file", type=str,
                         default="./setup_files/setup-processing.json",
@@ -163,3 +162,7 @@ if __name__ == '__main__':
     args = _parse_training_variables(args)
 
     processing(args['data_path'], args['output_path'], args['area_opening'], args['area_closing'],args['disk_radius'])
+
+
+if __name__ == '__main__':
+    main()

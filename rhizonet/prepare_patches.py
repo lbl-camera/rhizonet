@@ -134,7 +134,7 @@ def prepare_patches(args: Dict):
     return None
 
 
-if __name__ == '__main__':
+def main():
 
     parser = ArgumentParser(conflict_handler='resolve', description="Patch cropping parameter setting")
     parser.add_argument("--config_file", type=str,
@@ -142,4 +142,8 @@ if __name__ == '__main__':
                         help="json file training data parameters")
     args = parser.parse_args()
     args = parse_prepare_variables(args)
+
     prepare_patches(args)
+
+if __name__ == '__main__':
+    main()

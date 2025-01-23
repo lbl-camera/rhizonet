@@ -113,8 +113,7 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_class
     with open(os.path.join(log_dir, 'metrics.json'), 'w') as f:
         json.dump(dict_metrics, f)
         
-            
-if __name__ == '__main__':
+def main():
     parser = ArgumentParser(conflict_handler='resolve', description='Run inference using trained model')
     parser.add_argument("--pred_path", type=str,
                         default=".results/training_patches64_ex7ex9_batch32_dropout40/predictions/",
@@ -136,3 +135,5 @@ if __name__ == '__main__':
     args = vars(args)
     evaluate(args['pred_path'], args ['label_path'], args['log_dir'], args['task'], args['num_classes'])
 
+if __name__ == '__main__':
+    main()
