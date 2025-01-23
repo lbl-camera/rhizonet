@@ -9,7 +9,8 @@ Dependencies:
 - wandb
 
 Usage:
-    python train.py --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
+    pip install rhizonet
+    train_rhizonet --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
 """
 
 import os
@@ -108,12 +109,12 @@ def train_model(args):
     train_len, val_len, test_len = np.cumsum(np.round(len(images) * np.array(dataset_params['data_split'])).astype(int))
     idx = np.random.permutation(np.arange(len(images)))
 
-    train_images = [images[i] for i in idx[:train_len]][:100]
-    train_labels = [labels[i] for i in idx[:train_len]][:100]
-    val_images = [images[i] for i in idx[train_len:val_len]][:100]
-    val_labels = [labels[i] for i in idx[train_len:val_len]][:100]
-    test_images = [images[i] for i in idx[val_len:]][:100]
-    test_labels = [labels[i] for i in idx[val_len:]][:100]
+    train_images = [images[i] for i in idx[:train_len]]
+    train_labels = [labels[i] for i in idx[:train_len]]
+    val_images = [images[i] for i in idx[train_len:val_len]]
+    val_labels = [labels[i] for i in idx[train_len:val_len]]
+    test_images = [images[i] for i in idx[val_len:]]
+    test_labels = [labels[i] for i in idx[val_len:]]
     
     # Create datasets
     train_dataset = ImageDataset(train_images, train_labels, dataset_params, training=True)

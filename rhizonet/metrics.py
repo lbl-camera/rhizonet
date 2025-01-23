@@ -3,7 +3,8 @@ Script for evaluation metrics on a given set of predictions and groundtruth.
 The metrics used are Accuracy, Precision, Recall and IOU. 
 
 Usage:
-    python metrics.py ---pred_path "path" --label_path "path" --log_dir "path"
+    pip install rhizonet
+    evalmetrics_rhizonet ---pred_path "path" --label_path "path" --log_dir "path" --task "binary" --num_classes "2"
 """
 
 import os

@@ -4,7 +4,8 @@ Patches are saved only if at least a certain portion of pixels within the image 
 This percentage is also specified in the configuration file.
 
 Usage:
-    python prepare_patches.py --config_file ./setup_files/setup-pprepare.json 
+    pip install rhizonet
+    patchify_rhizonet --config_file ./setup_files/setup-pprepare.json 
 """
 
 import os

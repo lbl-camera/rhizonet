@@ -2,7 +2,8 @@
 Script for running inference using a pre-trained residual U-Net model for image segmentation.
 
 Usage:
-    python predict.py --config_file ./setup_files/setup-predict.json 
+    pip install rhizonet
+    predict_rhizonet --config_file ./setup_files/setup-predict.json 
 """
 
 import os
