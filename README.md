@@ -8,7 +8,7 @@
 [![Documentation Status](https://readthedocs.org/projects/rhizonet/badge/?version=latest)](https://rhizonet.readthedocs.io/en/latest/)
 [![codecov](https://codecov.io/github/lbl-camera/rhizonet/graph/badge.svg?token=CuKaQXQLkt)](https://codecov.io/github/lbl-camera/rhizonet)
 
-Segmentation pipeline for EcoFAB images
+Pipeline for deep-learning based 2D image segmentation of plant root grown in EcoFABs using a Residual U-net.
 
 * License: MIT license
 * Documentation: https://rhizonet.readthedocs.io
@@ -22,32 +22,44 @@ pip install rhizonet
 ## Features
 
 * Create patches
+```commandline
+patchify_rhizonet --config_file ./setup_files/setup-pprepare.json 
+```
+
 * Train
+```commandline
+train_rhizonet --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
+```
+
 * Inference
+```commandline
+predict_rhizonet --config_file ./setup_files/setup-predict.json 
+```
+
 * Post-processing
+```commandline
+postprocess_rhizonet --config_file ./setup_files/setup-processing.json 
+```
+
 * Evaluate metrics
+```commandline
+evalmetrics_rhizonet ---pred_path "path" --label_path "path" --log_dir "path" --task "binary" --num_classes "2"
+```
+## Description
+
+This code gives the tools to pre-process 2D RGB images and train a deep learning segmentation model using pytorch-lightning for code organization, logging and metrics for training and prediction. It uses as well the library monai for data augmentation and creating a Residual U-net model. 
+The training patches can be created using the data preparation code for cropping and patching. 
+
+The training was done on a dataset of multiple ecofabs (plants with different nutrition types) at the two last timestamps. The use of at least one gpu is necessary for training on small patch-size images.
+The predictions can be done on any other timestamp by loading the appropriate model path. The Google Colab tutorial below details the steps to do so with a given subset of images and 3 possible model weights (varying with the size of the used patches).
+It is also possible to apply the post-processing using the Google Colab tutorial on the predicted images which uses cropping and morphological operations, and plot the extracted biomass from the processed predictions. 
 
 
-## Copyright Notice 
-
-RhizoNet Copyright (c) 2023, The Regents of the University of California,
-through Lawrence Berkeley National Laboratory (subject to receipt of
-any required approvals from the U.S. Dept. of Energy) and University
-of California, Berkeley. All rights reserved.
-
-If you have questions about your rights to use or distribute this software,
-please contact Berkeley Lab's Intellectual Property Office at
-IPO@lbl.gov.
-
-NOTICE.  This Software was developed under funding from the U.S. Department
-of Energy and the U.S. Government consequently retains certain rights.  As
-such, the U.S. Government has been granted for itself and others acting on
-its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the
-Software to reproduce, distribute copies to the public, prepare derivative 
-works, and perform publicly and display publicly, and to permit others to do so.
+# Google Colab Tutorial for predicting and processing images
+This [Google Colab Tutorial](https://colab.research.google.com/drive/1uJa1bHYfm076xCEhWcG20DVSdMIRh-lr?usp=drive_link) is a short notebook that can load 3 possible model weights depending the model type preferred (3 model weights for each patch size trained model), generate predictions and process these predictions given 2 random unseen EcoFAB images of the same experiment. It also generates plots of the extracted biomass for each nutrition type at each date and compares it to the groundtruth (which is the manually scaled biomass by biologists). 
 
 
-## License Agreement 
+## License Agreement and Copyright
 
 MIT License
 

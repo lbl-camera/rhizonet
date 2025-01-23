@@ -2,7 +2,7 @@
 Script for applying postprocessing methods to inferred predictions using a the convex hull method as well as morphological operations. 
 
 Usage:
-    python postprocessing.py --config_file ./setup_files/setup-processing.json 
+    postprocess_rhizonet --config_file ./setup_files/setup-processing.json 
 """
 
 import os
