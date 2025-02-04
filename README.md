@@ -15,13 +15,25 @@ Pipeline for deep-learning based 2D image segmentation of plant root grown in Ec
 * Paper: https://www.nature.com/articles/s41598-024-63497-8
 
 
+## Description
+
+This code gives the tools to pre-process 2D RGB images and train a deep learning segmentation model using pytorch-lightning for code organization, logging and metrics for training and prediction. It uses as well the library monai for data augmentation and creating a Residual U-net model. 
+The training patches can be created using the data preparation code for cropping and patching. 
+
+The training was done on a dataset of multiple ecofabs (plants with different nutrition types) at the two last timestamps. The use of at least one gpu is necessary for training on small patch-size images.
+The predictions can be done on any other timestamp by loading the appropriate model path. The Google Colab tutorial below details the steps to do so with a given subset of images and 3 possible model weights (varying with the size of the used patches).
+It is also possible to apply the post-processing using the Google Colab tutorial on the predicted images which uses cropping and morphological operations, and plot the extracted biomass from the processed predictions. 
+
+
+# Google Colab Tutorial for predicting and processing images
+This [Google Colab Tutorial](https://colab.research.google.com/drive/1uJa1bHYfm076xCEhWcG20DVSdMIRh-lr?usp=drive_link) is a short notebook that can load 3 possible model weights depending the model type preferred (3 model weights for each patch size trained model), generate predictions and process these predictions given 2 random unseen EcoFAB images of the same experiment. It also generates plots of the extracted biomass for each nutrition type at each date and compares it to the groundtruth (which is the manually scaled biomass by biologists). 
+
 ## Installation
 ```commandline
 pip install rhizonet
 ```
 
-
-## Features
+## Command Line Features
 
 * Create patches
 ```commandline
@@ -32,6 +44,8 @@ patchify_rhizonet --config_file ./setup_files/setup-pprepare.json
 ```commandline
 train_rhizonet --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
 ```
+
+When running inference, it is possible to use the model weights available in the data folder of the repository, download them and add the path in the setup file setup-predict.json. 
 
 * Inference
 ```commandline
@@ -47,18 +61,6 @@ postprocess_rhizonet --config_file ./setup_files/setup-processing.json
 ```commandline
 evalmetrics_rhizonet ---pred_path "path" --label_path "path" --log_dir "path" --task "binary" --num_classes "2"
 ```
-## Description
-
-This code gives the tools to pre-process 2D RGB images and train a deep learning segmentation model using pytorch-lightning for code organization, logging and metrics for training and prediction. It uses as well the library monai for data augmentation and creating a Residual U-net model. 
-The training patches can be created using the data preparation code for cropping and patching. 
-
-The training was done on a dataset of multiple ecofabs (plants with different nutrition types) at the two last timestamps. The use of at least one gpu is necessary for training on small patch-size images.
-The predictions can be done on any other timestamp by loading the appropriate model path. The Google Colab tutorial below details the steps to do so with a given subset of images and 3 possible model weights (varying with the size of the used patches).
-It is also possible to apply the post-processing using the Google Colab tutorial on the predicted images which uses cropping and morphological operations, and plot the extracted biomass from the processed predictions. 
-
-
-# Google Colab Tutorial for predicting and processing images
-This [Google Colab Tutorial](https://colab.research.google.com/drive/1uJa1bHYfm076xCEhWcG20DVSdMIRh-lr?usp=drive_link) is a short notebook that can load 3 possible model weights depending the model type preferred (3 model weights for each patch size trained model), generate predictions and process these predictions given 2 random unseen EcoFAB images of the same experiment. It also generates plots of the extracted biomass for each nutrition type at each date and compares it to the groundtruth (which is the manually scaled biomass by biologists). 
 
 
 ## License Agreement and Copyright

@@ -109,7 +109,6 @@ class tiff_reader(MapTransform):
                         data[key] = dynamic_scale(data[key])
                     elif self.image_col == 'grayscale':
                         data[key] = dynamic_scale(io.imread(data_dict[key]))
-                        print(data[key].shape)
                     else:
                         # data[key] = np.transpose(np.array(Image.open(data_dict[key]))[..., :3], (2, 0, 1))
                         data[key] = np.array(Image.open(data_dict[key]))
