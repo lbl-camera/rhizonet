@@ -145,7 +145,9 @@ def test_prediction_function():
 
 def test_logging():
     with tempfile.TemporaryDirectory() as temp_dir:
+        wandb.login(key=os.getenv("WANDB_API_KEY"))
         wandb.init(dir=temp_dir, project="test_project", mode="offline")
+        
         wandb_logger = WandbLogger(project="test_project", save_dir=temp_dir)
 
         model = Unet2D(train_ds=None, val_ds=None, model='resnet', 
