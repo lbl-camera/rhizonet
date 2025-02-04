@@ -45,7 +45,7 @@ pip install rhizonet
 
 * Create patches
 ```commandline
-patchify_rhizonet --config_file ./setup_files/setup-pprepare.json 
+patchify_rhizonet --config_file ./setup_files/setup-prepare.json 
 ```
 
 * Train
