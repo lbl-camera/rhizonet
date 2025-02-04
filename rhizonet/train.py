@@ -26,7 +26,7 @@ from argparse import Namespace
 
 
 from monai.data import list_data_collate
-from lightning.pytorch.loggers import WandbLogger 
+from lightning.pytorch.loggers import WandbLogger, wandb
 
 
 # Import parent modules
@@ -125,10 +125,10 @@ def train_model(args):
     unet = Unet2D(train_dataset, val_dataset, **model_params)
 
     # Set up logging and callbacks
+    wandb.login(key=os.getenv("WANDB_API_KEY"))
     wandb_logger = WandbLogger(log_model="all",
                                project="rhizonet")
-    wandb_logger.login(key=os.getenv("WANDB_API_KEY"))
-    
+
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         dirpath=log_dir,
         filename="checkpoint-{epoch:02d}-{val_loss:.2f}",
