@@ -26,7 +26,8 @@ from argparse import Namespace
 
 
 from monai.data import list_data_collate
-from lightning.pytorch.loggers import WandbLogger, wandb
+from lightning.pytorch.loggers import WandbLogger
+import wandb
 
 
 # Import parent modules

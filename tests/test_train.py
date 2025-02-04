@@ -145,7 +145,7 @@ def test_prediction_function():
 
 def test_logging():
     with tempfile.TemporaryDirectory() as temp_dir:
-        wandb.login(key=os.getenv("WANDB_API_KEY"))
+        # wandb.login(key=os.getenv("WANDB_API_KEY"))
         wandb.init(dir=temp_dir, project="test_project", mode="offline")
         
         wandb_logger = WandbLogger(project="test_project", save_dir=temp_dir)
@@ -169,6 +169,7 @@ def test_logging():
         model.log.assert_any_call('val_precision', 0.85, prog_bar=False, sync_dist=True)
         model.log.assert_any_call('val_recall', 0.8, prog_bar=False, sync_dist=True)
         model.log.assert_any_call('val_iou', 0.75, prog_bar=True, sync_dist=True)
+        model.log.assert_any_call('val_dice', 0.824, prog_bar=True, sync_dist=True)
 
 
 if __name__ == "__main__":
