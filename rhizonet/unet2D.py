@@ -109,6 +109,8 @@ class tiff_reader(MapTransform):
                         data[key] = dynamic_scale(data[key])
                     elif self.image_col == 'grayscale':
                         data[key] = dynamic_scale(io.imread(data_dict[key]))
+                        data[key] = np.expand_dims(data[key], axis=0)
+                        
                     else:
                         # data[key] = np.transpose(np.array(Image.open(data_dict[key]))[..., :3], (2, 0, 1))
                         data[key] = np.array(Image.open(data_dict[key]))
@@ -127,6 +129,7 @@ class tiff_reader(MapTransform):
                     if self.dilation:
                         data[key] = dilation(data['label'], disk(self.disk_dilation))
                     data[key] = np.expand_dims(data[key], axis=0)
+
         
         if self.boundingbox:
             data['image'], data['label'] = extract_largest_component_bbox_image(img=data['image'], lab=data['label'])
@@ -244,6 +247,7 @@ class PredDataset2D(Dataset):
             img = dynamic_scale(img)
         elif self.input_col == 1:
             img = dynamic_scale(img)
+            img = np.expand_dims(img, axis=0)
 
         else:
             raise ValueError(f"Unexpected image shape: {img.shape}, channel dimension should be last and image should be either 2D or 3D")
@@ -254,7 +258,6 @@ class PredDataset2D(Dataset):
             ]
         )
         img = transform(img)
-
         if self.boundingbox:
             img = extract_largest_component_bbox_image(img)
         return (img, img_path)
@@ -313,6 +316,7 @@ class Unet2D(pl.LightningModule):
         self.hparams.class_values = self.hparams.class_values
         self.train_ds = train_ds
         self.val_ds = val_ds
+        self.hparams.task = 'multiclass'
 
         self.cnfmat = torchmetrics.ConfusionMatrix(num_classes=self.hparams.num_classes,
                                                    task=self.hparams.task,
@@ -428,30 +432,39 @@ class Unet2D(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         images, labels = batch["image"], batch["label"]
         logits = self.forward(images)  # forward pass on a batch
-        torch.save(images, 'train_tensor.pt')
-        
         classes = list(range(self.hparams.num_classes))
+        # torch.save(images, 'train_tensor.pt')
+
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         class_weights = get_weights(labels, classes, device, include_background=True)
+
         loss = self.loss_function(logits, labels, class_weights)
         self.loss = loss.item()
-
         self.log("train_loss", loss.item(), on_step=False, on_epoch=True, prog_bar=True)
 
-        if not self.has_executed:
-            dummy_input = torch.rand((1, 3,) + self.hparams.pred_patch_size) 
-            make_dot(self(dummy_input), params=dict(self.named_parameters())).render('network_graph', format='png')
-            self.logger.log_image(key="model_visualization", images=["network_graph.png"]) # Wandb Logger
-            self.has_executed = True
+        # if not self.has_executed:
+        #     dummy_input = torch.rand((1, self.hparams.input_channels,) + self.hparams.pred_patch_size) 
+        #     make_dot(self(dummy_input), params=dict(self.named_parameters())).render('network_graph', format='png')
+        #     self.logger.log_image(key="model_visualization", images=["network_graph.png"]) # Wandb Logger
+        #     self.has_executed = True
+            
+        # if os.path.exists("network_graph.png"):
+        #     os.remove("network_graph.png")
+        # if os.path.exists("train_tensor.pt"):
+        #     os.remove("train_tensor.pt")
+
         return loss
 
     def validation_step(self, batch, batch_idx):
         images, labels = batch["image"], batch["label"]
         logits = self.forward(images)
         classes = list(range(self.hparams.num_classes))
+        
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
         class_weights = get_weights(labels, classes, device, include_background=True)
         loss = self.loss_function(logits, labels, class_weights)
+        
         labeled_ind = (labels != -1)
         labeled_logits = torch.cat([logits[i, :, labeled_ind[i, :, :]] for i in range(len(logits))], dim=-1).transpose(
             0, 1)
@@ -484,18 +497,20 @@ class Unet2D(pl.LightningModule):
         return batch_logs
 
     def on_validation_epoch_end(self):
-        acc, prec, recall, iou = self._compute_cnf_stats()
+        acc, prec, recall, iou, dice = self._compute_cnf_stats()
 
         self.log('val_acc', acc, prog_bar=True, sync_dist=True)
         self.log('val_recall', recall, prog_bar=False, sync_dist=True)
         self.log('val_precision', prec, prog_bar=False, sync_dist=True)
         self.log('val_iou', iou, prog_bar=True, sync_dist=True)
+        self.log('val_dice', dice, prog_bar=True, sync_dist=True)
 
         val_logs = {'log':
                         {'val_acc': acc,
                          'val_recall': recall,
                          'val_precision': prec,
-                         'val_iou': iou}
+                         'val_iou': iou,
+                         'val_dice': dice}
                     }
 
         return val_logs
@@ -513,28 +528,28 @@ class Unet2D(pl.LightningModule):
             self.cnfmat(labeled_logits, torch.tensor(labels.numpy())[torch.tensor(labeled_ind.numpy())])
 
     def on_test_epoch_end(self):
-        acc, prec, recall, iou = self._compute_cnf_stats()
+        acc, prec, recall, iou, dice = self._compute_cnf_stats()
 
-        print(f"test performance: acc={acc:.02f}, precision={prec:.02f}, recall={recall:.02f}, iou={iou:.02f}")
+        print(f"test performance: acc={acc:.02f}, precision={prec:.02f}, recall={recall:.02f}, iou={iou:.02f}, dice={dice:.02f}")
         self.log('test_acc', acc, sync_dist=True)
         self.log('test_recall', recall, sync_dist=True)
         self.log('test_precision', prec, sync_dist=True)
-        self.log('test_iou', iou)
+        self.log('test_iou', iou, sync_dist=True)
+        self.log('test_dice', dice, sync_dist=True)
 
         with open(os.path.join(self.hparams.log_dir, 'test_stats.csv'), 'w') as f:
             writer = csv.writer(f)
-            writer.writerow("acc, prec, recall, iou")
-            writer.writerow(f"{acc:.02f}, {prec:.02f}, {recall:.02f}, {iou:.02f}")
+            writer.writerow("acc, prec, recall, iou, dice")
+            writer.writerow(f"{acc:.02f}, {prec:.02f}, {recall:.02f}, {iou:.02f}, {dice:.02f}")
 
     def pred_function(self, image):
         return sliding_window_inference(image, self.hparams.pred_patch_size, 1, self.forward)
 
     def predict_step(self, batch, batch_idx):
         images, fnames = batch
-        logits = self.pred_function(images.float())
         # cropped_images = extract_largest_component_bbox_image(images)
         # tensor_cropped_images = torch.tensor(cropped_images).to("cuda")
-        logits = self.pred_function(logits)
+        logits = self.pred_function(images.float())
 
         preds = torch.argmax(logits, dim=1).byte().squeeze(dim=1)
         images = (images * 255).byte()  # convert from float (0-to-1) to uint8
@@ -546,7 +561,7 @@ class Unet2D(pl.LightningModule):
 # For general multiclass tasks, we need a more robust calculation that sums over all non-class rows and columns to avoid misrepresenting the true negatives.
     def _compute_cnf_stats(self):
         cnfmat = self.cnfmat.compute()
-        true = torch.diag(cnfmat)
+        true = torch.diag(cnfmat).as_tensor() 
         tn = true[self.hparams.background_index]
         tp = torch.cat([true[:self.hparams.background_index], true[self.hparams.background_index + 1:]])
 
@@ -557,11 +572,12 @@ class Unet2D(pl.LightningModule):
         precision = torch.sum(tp) / torch.sum(tp + fp)
         recall = torch.sum(tp) / torch.sum(tp + fn)
         iou = torch.sum(tp) / (torch.sum(cnfmat) - tn)
+        dice = 2*torch.sum(tp) / (torch.sum(cnfmat) + tp - tn)
         iou_per_class = tp / (tp + fp + fn)
 
         self.cnfmat.reset()
 
-        return acc.item(), precision.item(), recall.item(), iou.item()
+        return acc.mean().item(), precision.mean().item(), recall.mean().item(), iou.mean().item(), dice.mean().item()
 
 
     # Compute metrics without excluding background

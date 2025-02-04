@@ -127,7 +127,8 @@ def train_model(args):
     # Set up logging and callbacks
     wandb_logger = WandbLogger(log_model="all",
                                project="rhizonet")
-
+    wandb_logger.login(key=os.getenv("WANDB_API_KEY"))
+    
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         dirpath=log_dir,
         filename="checkpoint-{epoch:02d}-{val_loss:.2f}",

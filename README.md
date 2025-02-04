@@ -28,6 +28,14 @@ It is also possible to apply the post-processing using the Google Colab tutorial
 # Google Colab Tutorial for predicting and processing images
 This [Google Colab Tutorial](https://colab.research.google.com/drive/1uJa1bHYfm076xCEhWcG20DVSdMIRh-lr?usp=drive_link) is a short notebook that can load 3 possible model weights depending the model type preferred (3 model weights for each patch size trained model), generate predictions and process these predictions given 2 random unseen EcoFAB images of the same experiment. It also generates plots of the extracted biomass for each nutrition type at each date and compares it to the groundtruth (which is the manually scaled biomass by biologists). 
 
+# First steps
+
+The first step prior to installing the package is create a virtual environment to install all requirements libraries when installing the rhizonet package. When doing so, you will need to set your W&B token as an environment variable in this virtual environment. 
+
+```commandline
+export WANDB_API_KEY="your_api_key_here"
+```
+
 ## Installation
 ```commandline
 pip install rhizonet
@@ -45,7 +53,7 @@ patchify_rhizonet --config_file ./setup_files/setup-pprepare.json
 train_rhizonet --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
 ```
 
-When running inference, it is possible to use the model weights available in the data folder of the repository, download them and add the path in the setup file setup-predict.json. 
+When running inference, it is possible to use the model weights available in the data folder of the repository, download them and add the path in the setup file 'setup-predict.json'
 
 * Inference
 ```commandline
