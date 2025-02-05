@@ -160,7 +160,7 @@ def test_logging():
                 logger=wandb_logger)
         model.log = MagicMock()
 
-        model._compute_cnf_stats = MagicMock(return_value=(0.9, 0.85, 0.8, 0.75))
+        model._compute_cnf_stats = MagicMock(return_value=(0.9, 0.85, 0.8, 0.75, 0.824))
 
         model.on_validation_epoch_end()
 
