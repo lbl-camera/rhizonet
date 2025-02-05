@@ -37,9 +37,11 @@ export WANDB_API_KEY="your_api_key_here"
 ```
 
 ## Installation
+
 ```commandline
 pip install rhizonet
 ```
+
 
 ## Command Line Features
 
@@ -48,22 +50,27 @@ pip install rhizonet
 patchify_rhizonet --config_file ./setup_files/setup-prepare.json 
 ```
 
+
 * Train
 ```commandline
 train_rhizonet --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
 ```
 
+
 When running inference, it is possible to use the model weights available in the data folder of the repository, download them and add the path in the setup file 'setup-predict.json'
+
 
 * Inference
 ```commandline
 predict_rhizonet --config_file ./setup_files/setup-predict.json 
 ```
 
+
 * Post-processing
 ```commandline
 postprocess_rhizonet --config_file ./setup_files/setup-processing.json 
 ```
+
 
 * Evaluate metrics
 ```commandline
