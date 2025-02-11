@@ -28,9 +28,14 @@ It is also possible to apply the post-processing using the Google Colab tutorial
 # Google Colab Tutorial for predicting and processing images
 This [Google Colab Tutorial](https://colab.research.google.com/drive/1uJa1bHYfm076xCEhWcG20DVSdMIRh-lr?usp=drive_link) is a short notebook that can load 3 possible model weights depending the model type preferred (3 model weights for each patch size trained model), generate predictions and process these predictions given 2 random unseen EcoFAB images of the same experiment. It also generates plots of the extracted biomass for each nutrition type at each date and compares it to the groundtruth (which is the manually scaled biomass by biologists). 
 
-# First steps
+# First installation steps
 
-The first step prior to installing the package is create a virtual environment to install all requirements libraries when installing the rhizonet package. When doing so, you will need to set your W&B token as an environment variable in this virtual environment. 
+The first step prior to installing the package is create a virtual environment with python3.9 to install all requirements libraries when installing the rhizonet package. When doing so, you will need to set your W&B token as an environment variable in this virtual environment. 
+
+```commandline
+python3.9 -m venv venv
+source venv/bin/activate
+```
 
 ```commandline
 export WANDB_API_KEY="your_api_key_here"
