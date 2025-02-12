@@ -82,7 +82,7 @@ def dynamic_scale(image: np.ndarray) -> np.ndarray:
     )
     if image.max() > 255:
         print(image.max())
-    return image
+    return transform(image)
 
 
 class tiff_reader(MapTransform):

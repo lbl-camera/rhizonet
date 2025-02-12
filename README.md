@@ -56,7 +56,8 @@ patchify_rhizonet --config_file ./setup_files/setup-prepare.json
 ```
 
 
-* Train
+* Train with the config_file completed:
+  - pred_data_dir should contain unseen full size images (in a folder called `images`) with associated labels (in a folder called `labels`) for metric evaluation after training is over. This option is different from the test set in the case of patch-size training: when training on patches instead of full size images, tests will be compiled on test patches and not full size images. In this case, inference is compiled on full size images. 
 ```commandline
 train_rhizonet --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
 ```
