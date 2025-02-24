@@ -103,7 +103,7 @@ def test_invalid_input_shape(tmp_path):
     topil = ToPILImage()
     invalid_image_path = tmp_path / "invalid_image.tif"
 
-    invalid_image_data = (np.random.rand(256, 256, 4) * 255).astype(np.float32)
+    invalid_image_data = (np.random.rand(256, 256, 5) * 255).astype(np.float32)
     invalid_image_data = topil(invalid_image_data)
     invalid_image_data.save(invalid_image_path)
 
