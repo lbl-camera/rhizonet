@@ -90,7 +90,7 @@ def transform_image(img_path:str) -> Tuple[np.ndarray, str]:
     if img.ndim == 4 and img.shape[-1] < 4:  # If shape is (h, w, d, c) assuming there are maximum 4 channels or modalities 
         img = np.transpose(img[..., :3] , (3, 0, 1, 2))  # Move channel to the first position
         img = dynamic_scale(img)
-    elif img.ndim == 3 and img.shape[-1] < 4:  # If shape is (h, w, c)
+    elif img.ndim == 3 and img.shape[-1] <= 4:  # If shape is (h, w, c)
         img = np.transpose(img[..., :3] , (2, 0, 1))  # Move channel to the first position
         img = dynamic_scale(img)
     elif img.ndim == 2: # if no batch dimension then create one

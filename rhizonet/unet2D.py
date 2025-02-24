@@ -118,10 +118,9 @@ class tiff_reader(MapTransform):
                             data[key] = np.transpose(data[key], (3, 0, 1, 2))  # Move channel to the first position
                             data[key] = dynamic_scale(data[key])[:3, ...]
 
-                        elif data[key].ndim == 3 and data[key].shape[-1] < 4:  # If shape is (h, w, c)
+                        elif data[key].ndim == 3 and data[key].shape[-1] <= 4:  # If shape is (h, w, c)
                             data[key] = np.transpose(data[key], (2, 0, 1))  # Move channel to the first position
                             data[key] = dynamic_scale(data[key])[:3, ...]
-                      
                         else:
                             raise ValueError(f"Unexpected image shape: {data[key].shape}, channel dimension should be last and image should be either 2D or 3D")
                 elif key == "label":
@@ -242,7 +241,7 @@ class PredDataset2D(Dataset):
         if img.ndim == 4 and img.shape[-1] < 4:  # If shape is (h, w, d, c) assuming there are maximum 3 channels or modalities 
             img = np.transpose(img[...,:3], (3, 0, 1, 2))  # Move channel to the first position
             img = dynamic_scale(img)
-        elif img.ndim == 3 and img.shape[-1] < 4:  # If shape is (h, w, c)
+        elif img.ndim == 3 and img.shape[-1] <= 4:  # If shape is (h, w, c)
             img = np.transpose(img[...,:3], (2, 0, 1))  # Move channel to the first position
             img = dynamic_scale(img)
         elif self.input_col == 1:
@@ -550,7 +549,6 @@ class Unet2D(pl.LightningModule):
         # cropped_images = extract_largest_component_bbox_image(images)
         # tensor_cropped_images = torch.tensor(cropped_images).to("cuda")
         logits = self.pred_function(images.float())
-
         preds = torch.argmax(logits, dim=1).byte().squeeze(dim=1)
         images = (images * 255).byte()  # convert from float (0-to-1) to uint8
         return (preds, images, fnames)
