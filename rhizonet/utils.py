@@ -119,10 +119,13 @@ def get_weights(
     if not include_background:
         classes.remove(0)
     flat_labels = labels.view(-1)
+
+    # FIX IF NOT ALL CLASSES ARE IN THE LABEL INPUT 
     n = len(classes)
-    class_counts = torch.bincount(flat_labels)
-    class_weights = torch.zeros_like(class_counts, dtype=torch.float)
-    class_weights[class_counts.nonzero()] = 1 / class_counts[class_counts.nonzero()]
+    class_counts = torch.bincount(flat_labels, minlength=n)
+    class_weights = torch.zeros(n, dtype=torch.float, device=device)
+    nonzero_mask = class_counts > 0
+    class_weights[nonzero_mask] = 1 / class_counts[nonzero_mask]
     class_weights /= class_weights.sum()
     print("class weights {}".format(class_weights))
 
