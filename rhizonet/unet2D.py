@@ -570,7 +570,9 @@ class Unet2D(pl.LightningModule):
         precision = torch.sum(tp) / torch.sum(tp + fp)
         recall = torch.sum(tp) / torch.sum(tp + fn)
         iou = torch.sum(tp) / (torch.sum(cnfmat) - tn)
-        dice = 2*torch.sum(tp) / (torch.sum(cnfmat) + tp - tn)
+        # dice = 2*torch.sum(2*tp) / (torch.sum(cnfmat) + tp - tn)
+        dice = 2 * torch.sum(tp) / (2 * torch.sum(tp) + torch.sum(fp) + torch.sum(fn))
+
         iou_per_class = tp / (tp + fp + fn)
 
         self.cnfmat.reset()
