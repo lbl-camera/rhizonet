@@ -40,7 +40,7 @@ def test_MapImage():
     allowed_values = [0, 85, 170]
     img = np.random.choice(allowed_values, size=(10, 10))
     mapped_values = [0, 1, 2]
-    mapped_img = MapImage(img, original_values=allowed_values)
+    mapped_img = MapImage(img, original_values=allowed_values, reverse=False)
     assert mapped_img.shape == img.shape
     assert np.all(np.isin(mapped_img, mapped_values))
 
@@ -72,7 +72,7 @@ def test_contrast_img():
 ])
 def test_createBinaryAnnotation(img_values, expected_fg_value):
     img = np.random.choice(img_values, (100, 100), replace=True).astype(np.uint8)
-    binary_mask = createBinaryAnnotation(img)
+    binary_mask = createBinaryAnnotation(img, expected_fg_value)
     assert binary_mask.shape == img.shape
     assert np.all(np.isin(binary_mask, [0, expected_fg_value]))
 

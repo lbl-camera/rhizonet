@@ -200,9 +200,9 @@ def train_model(args):
 
     # Evaluate metrics on full size test images 
     if dataset_params['binary_preds']:
-        evaluate(pred_path, pred_lab_path, log_dir, task='binary', num_classes=2)
+        evaluate(pred_path, pred_lab_path, log_dir, task='binary', num_classes=2, frg_class = dataset_params['frg_class'])
     else:
-        evaluate(pred_path, pred_lab_path, log_dir, task='multiclass', num_classes=len(labels))
+        evaluate(pred_path, pred_lab_path, log_dir, task='multiclass', num_classes=len(labels), frg_class = dataset_params['frg_class'])
         
 
 def main():

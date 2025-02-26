@@ -4,7 +4,7 @@ The metrics used are Accuracy, Precision, Recall and IOU.
 
 Usage:
     pip install rhizonet
-    evalmetrics_rhizonet ---pred_path "path" --label_path "path" --log_dir "path" --task "binary" --num_classes "2"
+    evalmetrics_rhizonet ---pred_path "path" --label_path "path" --log_dir "path" --task "binary" --num_classes "2" --frg_class 85
 """
 
 import os
@@ -65,7 +65,7 @@ def calculate_all_metrics(pred: torch.Tensor,
     return acc.item(), precision.item(), recall.item(), iou.item(), dice.item()
 
 
-def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_classes: int) -> None:
+def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_classes: int, frg_class: int = 255) -> None:
     """
     Reads the prediction and groundtruth images, evaluates the metrics Accuracy, Precision, Recall and IOU.
     Saves results in `metrics.json` file in the specified `log_dir`. 
@@ -79,6 +79,8 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_class
         log_dir (str): filepath where results will be saved in a json file
         num_classes (int): number of class labels
         task (int): type of segmentation task if processing binary segmentation masks or multiclass segmentation images (e.g. `binary` or `multiclass`)
+        frg_class (int): value of the foreground class when creating binary segmentation masks
+
     """
     pred_list = sorted([os.path.join(pred_path, e) for e in os.listdir(pred_path) if not e.startswith(".")])
     label_list = sorted([os.path.join(label_path, e) for e in os.listdir(label_path) if not e.startswith(".")])
@@ -91,7 +93,7 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_class
         lab = io.imread(lab_path) # Groundtruth image
 
         if task == 'binary':
-            lab = createBinaryAnnotation(lab)
+            lab = createBinaryAnnotation(lab, frg_class)
             lab = torch.Tensor(lab/255.0)
 
         # Check if prediction is scaled by 255 for visualization 
@@ -133,10 +135,13 @@ def main():
     parser.add_argument("--num_classes",
                         default=2,
                         help="Number of classes including background")
+    parser.add_argument("--frg_class",
+                        default=255,
+                        help="value of the foreground class when using binary segmentation masks")
     
     args = parser.parse_args()
     args = vars(args)
-    evaluate(args['pred_path'], args ['label_path'], args['log_dir'], args['task'], args['num_classes'])
+    evaluate(args['pred_path'], args ['label_path'], args['log_dir'], args['task'], args['num_classes'], args['frg_class'])
 
 if __name__ == '__main__':
     main()
