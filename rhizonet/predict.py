@@ -172,7 +172,7 @@ def get_prediction(
     """
 
     prediction = predict_step(file, unet, pred_patch_size).squeeze(0)
-    prediction = MapImage(prediction, labels)
+    prediction = MapImage(prediction, labels, reverse=True)
     pred = prediction.cpu().numpy().squeeze().astype(np.uint8)
     # pred_img, mask = elliptical_crop(pred, 1000, 1500, width=1400, height=2240)
     if binary_preds:

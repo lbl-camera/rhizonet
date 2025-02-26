@@ -187,22 +187,22 @@ def train_model(args):
 
     labels = dataset_params['class_values']
     for (pred, _, fname) in predictions:
-        pred = MapImage(pred, labels)
+        pred = MapImage(pred, labels, reverse=True)
         pred = pred.numpy().squeeze().astype(np.uint8)
         fname = os.path.basename(fname[0]).split('.')[0] + ".png"
         # pred_img, mask = elliptical_crop(pred, 1000, 1500, width=1400, height=2240)
         if dataset_params['binary_preds']:
-            binary_mask = createBinaryAnnotation(pred).squeeze().astype(np.uint8)
+            binary_mask = createBinaryAnnotation(pred, dataset_params['frg_class']).astype(np.uint8)
             io.imsave(os.path.join(pred_path, fname), binary_mask, check_contrast=False)
         else:
-            io.imsave(os.path.join(pred_path, fname), pred.squeeze().astype(np.unint8), check_contrast=False)
+            io.imsave(os.path.join(pred_path, fname), pred, check_contrast=False)
 
 
     # Evaluate metrics on full size test images 
     if dataset_params['binary_preds']:
         evaluate(pred_path, pred_lab_path, log_dir, task='binary', num_classes=2)
     else:
-        evaluate(pred_path, pred_lab_path, log_dir, task='multiclass', num_classes=args['num_classes'])
+        evaluate(pred_path, pred_lab_path, log_dir, task='multiclass', num_classes=len(labels))
         
 
 def main():

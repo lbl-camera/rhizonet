@@ -134,7 +134,8 @@ def get_weights(
 
 def MapImage(
         image: Union[np.ndarray, torch.Tensor], 
-        original_values: List[int]
+        original_values: List[int],
+        reverse: bool
         ) -> Union[np.ndarray, torch.Tensor]:
     """
     Maps the current values of a given input image to the values given by the tuple (current values, new values).
@@ -142,6 +143,7 @@ def MapImage(
     Args:
         image (Union[np.ndarray, torch.Tensor]): The input image to transform
         original_values (List[int]): List of original values to be mapped
+        reverse (bool): True if mapping the other way around back to original values
 
     Raises:
         TypeError: If the input image is neither a numpy array or a torch tensor
@@ -161,12 +163,16 @@ def MapImage(
         raise TypeError("Input must be a numpy.ndarray, torch.Tensor")
     
     target_values = list(range(len(original_values)))
-
-    # Create the transform
-    map_label_transform = MapLabelValued(["label"], original_values, target_values)
-
+    if not reverse:
+        # Create the transform
+        map_label_transform = MapLabelValued(["label"], original_values, target_values)
+    else:
+        # Create the transform
+        map_label_transform = MapLabelValued(["label"], target_values, original_values)
+        
     # Apply the transform
     mapped_label_image = map_label_transform({"label": data})["label"]
+
     return mapped_label_image
 
 
@@ -251,15 +257,17 @@ def contrast_img(img: np.ndarray) -> np.ndarray:
     return img
 
 
-def createBinaryAnnotation(img: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
+def createBinaryAnnotation(img: Union[np.ndarray, torch.Tensor],
+                           frg_class: int) -> Union[np.ndarray, torch.Tensor]:
     """
     Creates a binary mask out of the prediction result with root as foreground and the rest as background
 
     Args:
         img (Union[np.ndarray, torch.Tensor]): Input image
+        frg_class (int): value of the foreground class when creating binary segmentation masks
 
     Raises:
-        TypeError: if the input is neither a numpy array or a torch tensor 
+        TypeError: if the input is neither a numpy array or a torch tensor or if the foreground value is wrong. 
 
     Returns:
         Union[np.ndarray, torch.Tensor]: binary mask 
@@ -273,9 +281,9 @@ def createBinaryAnnotation(img: Union[np.ndarray, torch.Tensor]) -> Union[np.nda
             return img
         else:
             try: 
-                frg = (img == u[2]).int() * 255
+                frg = (img == frg_class).int() * 255
             except: 
-                frg = (img == u[1]).int() * 255    
+                print("Error in the foreground value")
     elif isinstance(img, np.ndarray):
         u = np.unique(img)
         bkg = np.zeros(img.shape)  # background
@@ -284,9 +292,9 @@ def createBinaryAnnotation(img: Union[np.ndarray, torch.Tensor]) -> Union[np.nda
             return img
         else:
             try: 
-                frg = (img == u[2]).astype(int) * 255
+                frg = (img == frg_class).astype(int) * 255
             except: 
-                frg = (img == u[1]).astype(int) * 255    
+                print("Error in the foreground value")
     else:
         raise TypeError("Input should be a PyTorch tensor or a NumPy array.")
     return bkg + frg

@@ -483,7 +483,7 @@ class Unet2D(pl.LightningModule):
                 preds = (preds * 255).byte()
 
 
-                y = MapImage(preds, self.hparams.class_values)
+                y = MapImage(preds, self.hparams.class_values, reverse=False)
                 
                 gridy = torchvision.utils.make_grid(y.view(y.shape[0], 1, y.shape[1], y.shape[2]), nrow=5)
                 self.logger.log_image(key="prediction_imgs", images=[to_pil(gridy)]) # Wandb Logger

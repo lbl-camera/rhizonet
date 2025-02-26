@@ -60,7 +60,8 @@ def calculate_all_metrics(pred: torch.Tensor,
     recall = torch.sum(tp) / torch.sum(tp + fn)
     iou = torch.sum(tp) / (torch.sum(cnfmat) - tn)
     iou_per_class = tp / (tp + fp + fn)
-    dice = 2*torch.sum(tp) / (torch.sum(cnfmat) - tn + tp) 
+    dice = 2 * torch.sum(tp) / (2 * torch.sum(tp) + torch.sum(fp) + torch.sum(fn))
+    
     return acc.item(), precision.item(), recall.item(), iou.item(), dice.item()
 
 
@@ -97,8 +98,9 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_class
         if np.min(pred) >= 0 and np.max(pred) == 255:
             pred = torch.Tensor(pred/255.0)
 
-        pred = torch.tensor(pred)
-        lab = torch.tensor(lab) 
+        original_labels = np.unique(pred)
+        pred = MapImage(torch.tensor(pred), original_labels, reverse=False)
+        lab = MapImage(torch.tensor(lab), original_labels, reverse=False)
         filename = os.path.basename(pred_path)
 
         dict_metrics[filename] = {}
@@ -108,8 +110,7 @@ def evaluate(pred_path: str, label_path: str, log_dir: str, task: str, num_class
         dict_metrics[filename]['recall'] = rec
         dict_metrics[filename]['IOU'] = iou
         dict_metrics[filename]['Dice'] = dice
-
-                                                                                                                                                                                           
+                                                                                                                                                 
     # print("Metrics: \n {}".format(dict_metrics))
     with open(os.path.join(log_dir, 'metrics.json'), 'w') as f:
         json.dump(dict_metrics, f)
@@ -132,6 +133,7 @@ def main():
     parser.add_argument("--num_classes",
                         default=2,
                         help="Number of classes including background")
+    
     args = parser.parse_args()
     args = vars(args)
     evaluate(args['pred_path'], args ['label_path'], args['log_dir'], args['task'], args['num_classes'])
