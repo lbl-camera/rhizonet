@@ -65,7 +65,7 @@ def test_evaluate():
         io.imsave(pred_path1, pred1)
         io.imsave(label_path1, label1)
 
-        evaluate(pred_dir, label_dir, log_dir, task="binary", num_classes=2)
+        evaluate(pred_dir, label_dir, log_dir, task="binary", num_classes=2, frg_class=1)
 
         # Check that the metrics file is created
         metrics_path = os.path.join(log_dir, "metrics.json")
