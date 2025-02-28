@@ -7,7 +7,6 @@ from tempfile import TemporaryDirectory
 from skimage import io
 from rhizonet.metrics import calculate_all_metrics, evaluate
 
-
 # Sample prediction and groundtruth data
 @pytest.fixture
 def sample_data():

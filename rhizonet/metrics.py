@@ -60,9 +60,8 @@ def calculate_all_metrics(pred: torch.Tensor,
     recall = torch.sum(tp) / torch.sum(tp + fn)
     iou = torch.sum(tp) / (torch.sum(cnfmat) - tn)
     iou_per_class = tp / (tp + fp + fn)
-    # dice = 2 * torch.sum(tp) / (2 * torch.sum(tp) + torch.sum(fp) + torch.sum(fn))
-    dice = 2*torch.sum(2*tp) / (torch.sum(cnfmat) + tp - tn)
-
+    dice = 2 * torch.sum(tp) / (2 * torch.sum(tp) + torch.sum(fp) + torch.sum(fn))
+    
     return acc.item(), precision.item(), recall.item(), iou.item(), dice.item()
 
 
