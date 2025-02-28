@@ -53,19 +53,19 @@ def test_evaluate():
             [1, 1, 0, 0],
             [0, 0, 0, 1],
             [0, 0, 1, 1]
-        ], dtype=torch.uint8)
+        ], dtype=torch.uint8)*255
         label1 = torch.tensor([
             [1, 1, 0, 0],
             [1, 0, 0, 0],
             [0, 0, 0, 1],
             [0, 0, 1, 1]
-        ], dtype=torch.uint8)
+        ], dtype=torch.uint8)*255
         pred_path1 = os.path.join(pred_dir, "pred1.png")
         label_path1 = os.path.join(label_dir, "label1.png")
         io.imsave(pred_path1, pred1)
         io.imsave(label_path1, label1)
 
-        evaluate(pred_dir, label_dir, log_dir, task="binary", num_classes=2, frg_class=1)
+        evaluate(pred_dir, label_dir, log_dir, task="binary", num_classes=2)
 
         # Check that the metrics file is created
         metrics_path = os.path.join(log_dir, "metrics.json")
