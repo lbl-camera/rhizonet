@@ -37,6 +37,12 @@ python3.9 -m venv venv
 source venv/bin/activate
 ```
 
+or using conda: 
+```commandline
+conda create --name myenv python=3.9
+conda activate myenv
+```
+
 ```commandline
 export WANDB_API_KEY="your_api_key_here"
 ```
