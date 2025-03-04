@@ -8,7 +8,7 @@
 [![Documentation Status](https://readthedocs.org/projects/rhizonet/badge/?version=latest)](https://rhizonet.readthedocs.io/en/latest/)
 [![codecov](https://codecov.io/github/lbl-camera/rhizonet/graph/badge.svg?token=CuKaQXQLkt)](https://codecov.io/github/lbl-camera/rhizonet)
 
-Pipeline for deep-learning based 2D image segmentation of plant root grown in EcoFABs using a Residual U-net.
+Pipeline for deep-learning based 2D image segmentation of plant roots grown in EcoFABs using a Residual U-net.
 
 * License: MIT license
 * Documentation: https://rhizonet.readthedocs.io
