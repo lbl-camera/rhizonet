@@ -21,7 +21,7 @@ This code gives the tools to pre-process 2D RGB images and train a deep learning
 The training patches can be created using the data preparation code for cropping and patching. 
 
 The training was done on a dataset of multiple ecofabs (plants with different nutrition types) at the two last timestamps. The use of at least one gpu is necessary for training on small patch-size images.
-The predictions can be done on any other timestamp by loading the appropriate model path. The Google Colab tutorial below details the steps to do so with a given subset of images and 3 possible model weights (varying with the size of the used patches).
+The predictions can be done on any other timestamp by loading the model path. The Google Colab tutorial below details the steps to do so with a given subset of images and model weights.
 It is also possible to apply the post-processing using the Google Colab tutorial on the predicted images which uses cropping and morphological operations, and plot the extracted biomass from the processed predictions. 
 
 
@@ -65,7 +65,7 @@ patchify_rhizonet --config_file ./setup_files/setup-prepare.json
 * Train with the config_file completed:
   - pred_data_dir should contain unseen full size images (in a folder called `images`) with associated labels (in a folder called `labels`) for metric evaluation after training is over. This option is different from the test set in the case of patch-size training: when training on patches instead of full size images, tests will be compiled on test patches and not full size images. In this case, inference is compiled on full size images. 
 ```commandline
-train_rhizonet --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
+train_rhizonet --config_file ./setup_files/setup-train.json --gpus 2 --strategy "ddp" --accelerator "gpu"
 ```
 
 
@@ -86,7 +86,7 @@ postprocess_rhizonet --config_file ./setup_files/setup-processing.json
 
 * Evaluate metrics
 ```commandline
-evalmetrics_rhizonet ---pred_path "path" --label_path "path" --log_dir "path" --task "binary" --num_classes "2"
+evalmetrics_rhizonet ---pred_path "path" --label_path "path" --log_dir "path" --task "binary" --num_classes 2 --frg_class 255
 ```
 
 

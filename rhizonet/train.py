@@ -10,7 +10,7 @@ Dependencies:
 
 Usage:
     pip install rhizonet
-    train_rhizonet --config_file ./setup_files/setup-unet2d.json --gpus 2 --strategy ddp --accelerator gpu
+    train_rhizonet --config_file ./setup_files/setup-train.json --gpus 2 --strategy "ddp" --accelerator "gpu"
 """
 
 import os
@@ -89,10 +89,10 @@ def train_model(args):
 
     Example::
         Run this script using the following command-line if 2 GPU nodes available: 
-            python train.py --gpus 2 --strategy "ddp" --config_file "./setup_files/setup-unet2d.json"
+            python train.py --gpus 2 --strategy "ddp" --config_file "./setup_files/setup-train.json"
         
         Run this script using the following command-line if 1 GPU node available: 
-            python train.py --gpus 1 --strategy "dp" --config_file "./setup_files/setup-unet2d.json"
+            python train.py --gpus 1 --strategy "dp" --config_file "./setup_files/setup-train.json"
     """
 
 
@@ -208,7 +208,7 @@ def train_model(args):
 def main():
     parser = ArgumentParser(conflict_handler='resolve')
     parser.add_argument("--config_file", type=str,
-                        default="../data/setup_files/setup-unet2d.json",
+                        default="../data/setup_files/setup-train.json",
                         help="json file training data parameters")
     parser.add_argument("--gpus", type=int, default=1, help="how many gpus to use")
     parser.add_argument("--strategy", type=str, default='ddp', help="pytorch strategy")
