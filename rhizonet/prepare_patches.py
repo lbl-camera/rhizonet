@@ -5,7 +5,7 @@ This percentage is also specified in the configuration file.
 
 Usage:
     pip install rhizonet
-    patchify_rhizonet --config_file ./setup_files/setup-pprepare.json 
+    patchify_rhizonet --config_file ./setup_files/setup-prepare.json 
 """
 
 import os
@@ -95,7 +95,7 @@ def prepare_patches(args: Dict):
 
     for i in tqdm(train_idx):
         image, label = io.imread(path_images[i]), io.imread(path_labels[i])
-        image_patch_size = args['train_patch_size'] + (len(args['train_patch_size']), ) 
+        image_patch_size = args['train_patch_size'] + (len(args['train_patch_size'])+1, ) 
         image_step_size = args['step_size'] + (3,)
 
         img_crop = np.vstack(
