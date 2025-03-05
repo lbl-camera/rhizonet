@@ -95,9 +95,16 @@ def prepare_patches(args: Dict):
 
     for i in tqdm(train_idx):
         image, label = io.imread(path_images[i]), io.imread(path_labels[i])
-        image_patch_size = args['train_patch_size'] + (len(args['train_patch_size'])+1, ) 
-        image_step_size = args['step_size'] + (3,)
 
+        if image.shape[2] >= 3: # RGB or RGBA image
+            image_patch_size = args['train_patch_size'] + (image.shape[2], ) 
+            image_step_size = args['step_size'] + (3,)
+        elif len(image.shape) == 2: # Grayscale image 
+            image_patch_size = args['train_patch_size'] 
+            image_step_size = args['step_size'] 
+        else:
+            raise AttributeError("image should be of RGB, RGBA or grayscale")
+        
         img_crop = np.vstack(
             util.view_as_windows(image, window_shape=image_patch_size, step=image_step_size))
         img_crop = img_crop.squeeze(1)

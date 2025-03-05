@@ -197,6 +197,9 @@ def predict_model(args: Dict):
     labels = args['labels']
     binary_preds = args['binary_preds']
     frg_class = args['frg_class']
+    
+    os.makedirs(save_path, exist_ok=True)
+    
     # Looping through all ecofab folders in the pred_data_dir directory
     for ecofab in sorted(os.listdir(pred_data_dir)):
         if not ecofab.startswith("."):
