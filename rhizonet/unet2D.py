@@ -244,7 +244,7 @@ class PredDataset2D(Dataset):
         elif img.ndim == 3 and img.shape[-1] <= 4:  # If shape is (h, w, c)
             img = np.transpose(img[...,:3], (2, 0, 1))  # Move channel to the first position
             img = dynamic_scale(img)
-        elif self.input_col == 1:
+        elif self.input_col == 1: # grayscale image 
             img = dynamic_scale(img)
             img = np.expand_dims(img, axis=0)
 

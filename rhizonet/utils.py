@@ -48,9 +48,14 @@ def extract_largest_component_bbox_image(img: Union[np.ndarray, torch.Tensor],
     else:
         raise TypeError("Input must be a numpy.ndarray, torch.Tensor, or None.")
     
-    # Remove dimension if there is a batch dim and format is (B, C, H, W)
-    image = img.squeeze()[2, ...]
-
+    
+    # Remove dimension if there is a batch dim and format is (B, C, H, W) or (B, H, W) for grayscale images
+    if len(img.shape) > 4: # (C, H, W)
+        image = img.squeeze()
+        image = img[2, ...] # choose a channel 
+    else:
+        image = img.squeeze()
+        
     # Get the largest connected component
     image = ndi.gaussian_filter(image, sigma=2)
 
@@ -60,7 +65,6 @@ def extract_largest_component_bbox_image(img: Union[np.ndarray, torch.Tensor],
 
     # Label connected components
     label_image = measure.label(binary_image)
-
     # Measure properties of the connected components
     props = measure.regionprops(label_image)
 
