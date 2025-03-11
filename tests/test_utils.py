@@ -6,6 +6,10 @@ import unittest
 import numpy as np
 import torch
 from PIL import Image
+
+import sys
+if os.path.exists("/Users/zsordo/Desktop/local.txt"):
+    sys.path.append("/Users/zsordo/Desktop/rhizonet")
 from rhizonet.utils import (
     extract_largest_component_bbox_image,
     get_weights,

@@ -48,11 +48,10 @@ def extract_largest_component_bbox_image(img: Union[np.ndarray, torch.Tensor],
     else:
         raise TypeError("Input must be a numpy.ndarray, torch.Tensor, or None.")
     
-    
     # Remove dimension if there is a batch dim and format is (B, C, H, W) or (B, H, W) for grayscale images
-    if len(img.shape) > 4: # (C, H, W)
+    if len(img.squeeze().shape) >= 3 and img.squeeze().shape[0]>=3: #RGB or RGBA images after removing the batch dimension
         image = img.squeeze()
-        image = img[2, ...] # choose a channel 
+        image = image[2, ...] # choose a channel 
     else:
         image = img.squeeze()
         

@@ -7,7 +7,10 @@ from skimage.morphology import dilation
 from unittest.mock import patch, MagicMock
 from PIL import Image
 from torchvision.transforms import ToPILImage
-
+import sys
+if os.path.exists("/Users/zsordo/Desktop/local.txt"):
+    sys.path.append("/Users/zsordo/Desktop/rhizonet")
+    
 from rhizonet.unet2D import ImageDataset, tiff_reader
 from rhizonet.utils import extract_largest_component_bbox_image
 

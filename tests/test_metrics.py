@@ -5,6 +5,10 @@ import torch
 import numpy as np
 from tempfile import TemporaryDirectory
 from skimage import io
+import sys
+if os.path.exists("/Users/zsordo/Desktop/local.txt"):
+    sys.path.append("/Users/zsordo/Desktop/rhizonet")
+    
 from rhizonet.metrics import calculate_all_metrics, evaluate
 
 # Sample prediction and groundtruth data

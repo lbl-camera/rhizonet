@@ -10,7 +10,9 @@ from unittest.mock import Mock, MagicMock
 from unittest.mock import patch
 import wandb
 from pytorch_lightning.loggers import WandbLogger
-
+import sys
+if os.path.exists("/Users/zsordo/Desktop/local.txt"):
+    sys.path.append("/Users/zsordo/Desktop/rhizonet")
 from rhizonet.train import train_model, _parse_training_variables
 from rhizonet.unet2D import Unet2D
 import pytorch_lightning as pl

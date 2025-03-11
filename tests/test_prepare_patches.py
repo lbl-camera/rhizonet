@@ -5,6 +5,9 @@ from argparse import Namespace
 import json
 from skimage import io, util
 from tempfile import TemporaryDirectory
+import sys
+if os.path.exists("/Users/zsordo/Desktop/local.txt"):
+    sys.path.append("/Users/zsordo/Desktop/rhizonet")
 from rhizonet.prepare_patches import parse_prepare_variables, prepare_patches
 
 @pytest.fixture

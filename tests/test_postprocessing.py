@@ -4,7 +4,9 @@ import pytest
 from skimage.morphology import disk, dilation, erosion, area_closing, area_opening, convex_hull_image
 from skimage.io import imsave, imread
 from tempfile import TemporaryDirectory
-
+import sys
+if os.path.exists("/Users/zsordo/Desktop/local.txt"):
+    sys.path.append("/Users/zsordo/Desktop/rhizonet")
 from rhizonet.postprocessing import getLargestCC, maxProjection, processing
 
 
