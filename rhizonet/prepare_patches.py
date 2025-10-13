@@ -26,9 +26,9 @@ from tqdm import tqdm
 from typing import Dict, Tuple, Sequence 
 
 try:
-    from .utils import get_image_paths, match_image_label_lists, common_files
+    from .utils import get_image_paths, common_files
 except ImportError:
-    from utils import get_image_paths, match_image_label_lists, common_files
+    from utils import get_image_paths, common_files
 
 
 def parse_prepare_variables(argparse_args):
