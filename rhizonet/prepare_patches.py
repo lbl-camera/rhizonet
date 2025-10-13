@@ -13,6 +13,7 @@ import json
 import random
 from argparse import ArgumentParser
 import argparse
+from pathlib import Path
 
 import numpy as np
 from skimage import io, util
@@ -25,9 +26,9 @@ from tqdm import tqdm
 from typing import Dict, Tuple, Sequence 
 
 try:
-    from .utils import get_image_paths
+    from .utils import get_image_paths, common_files
 except ImportError:
-    from utils import get_image_paths
+    from utils import get_image_paths, common_files
 
 
 def parse_prepare_variables(argparse_args):
@@ -62,8 +63,6 @@ def prepare_patches(args: Dict):
     Returns:
         None: save the image in the specified folder 
     """
-
-
     
     image_dir = os.path.join(args['save_path'], "images")
     label_dir = os.path.join(args['save_path'], "labels")
@@ -71,12 +70,18 @@ def prepare_patches(args: Dict):
         os.makedirs(folder, exist_ok=True)
 
     '''For the raw data path, the images and labels paths are given in the setup json file'''
-    # path_images = sorted([os.path.join(args['images_path'], e) for e in os.listdir(args['images_path']) if not e.startswith(".")])
-    # path_labels = sorted([os.path.join(args['labels_path'], e) for e in os.listdir(args['labels_path']) if not e.startswith(".")])
-
     path_images = get_image_paths(args['images_path'])
     path_labels = get_image_paths(args['labels_path'])
+    endpoint_img, endpoint_lbl = Path(path_images[0]).suffix, Path(path_labels[0]).suffix 
     print("Number of images: {} \n Number of labels: {}".format(len(path_images), len(path_labels)))
+
+    # Add condition to keep only matching files in images and labels directory
+    label_prefix = args['label_prefix']
+    
+    unique_files, endpoint_img, endpoint_lbl = common_files(args['images_path'], args['labels_path'], prefix=label_prefix)
+    matching_path_images = sorted([os.path.join(args['images_path'], e + endpoint_img) for e in unique_files])
+    matching_path_labels = sorted([os.path.join(args['labels_path'], label_prefix + e + endpoint_lbl) for e in unique_files])
+    print("Number of maching images: {} \n Number of maching labels: {}".format(len(matching_path_images), len(matching_path_labels)))
 
     '''
     Note: 
@@ -85,7 +90,7 @@ def prepare_patches(args: Dict):
         That option puts aside `unseen` full-size images.
     '''
 
-    n = len(path_images)
+    n = len(matching_path_images)
     if args['nb_pred_data'] is not None:
         m = int(args['nb_pred_data'])
         pred_idx = random.sample(list(range(n)), m)
@@ -94,8 +99,8 @@ def prepare_patches(args: Dict):
     train_idx = [e for e in range(n) if e not in pred_idx]
 
     for i in tqdm(train_idx):
-        image, label = io.imread(path_images[i]), io.imread(path_labels[i])
-
+        
+        image, label = io.imread(matching_path_images[i]), io.imread(matching_path_labels[i])
         if image.shape[2] >= 3: # RGB or RGBA image
             image_patch_size = args['train_patch_size'] + (image.shape[2], ) 
             image_step_size = args['step_size'] + (3,)
@@ -114,8 +119,8 @@ def prepare_patches(args: Dict):
 
         for j, (img, lab) in enumerate(zip(img_crop, label_crop)):
             if (np.count_nonzero(lab) / lab.size) > args['min_labeled']:
-                f_img = os.path.basename(path_images[i]).split('.')[0]
-                f_label = os.path.basename(path_labels[i]).split('.')[0]
+                f_img = os.path.basename(matching_path_images[i]).split('.')[0]
+                f_label = os.path.basename(matching_path_labels[i]).split('.')[0]
 
                 fname_img = f"{f_img}_img_{i:04d}_crop-{j:04d}.tif"
                 fname_label = f"{f_label}_img_{i:04d}_crop-{j:04d}.png"
@@ -123,21 +128,19 @@ def prepare_patches(args: Dict):
                 io.imsave(os.path.join(image_dir, fname_img), util.img_as_ubyte(img), check_contrast=False)
                 io.imsave(os.path.join(label_dir, fname_label), util.img_as_ubyte(lab), check_contrast=False)
 
-        if args['nb_pred_data'] is not None:
-            pred_image_dir = os.path.join(args['save_pred_path'], 'images')
-            pred_label_dir = os.path.join(args['save_pred_path'], 'labels')
-            if not os.path.exists(pred_image_dir):
-                os.makedirs(pred_image_dir)
-            if not os.path.exists(pred_label_dir):
-                os.makedirs(pred_label_dir)
+    if args['nb_pred_data'] is not None:
+        pred_image_dir = os.path.join(args['save_pred_path'], 'images')
+        pred_label_dir = os.path.join(args['save_pred_path'], 'labels')
+        os.makedirs(pred_image_dir, exist_ok=True)
+        os.makedirs(pred_label_dir, exist_ok=True)
 
-            for i in tqdm(pred_idx):
-                image, label = io.imread(path_images[i]), io.imread(path_labels[i])
-                f_img = os.path.basename(path_images[i])
-                f_label = os.path.basename(path_labels[i])
+        for i in tqdm(pred_idx):
+            image, label = io.imread(matching_path_images[i]), io.imread(matching_path_labels[i])
+            f_img = os.path.basename(matching_path_images[i])
+            f_label = os.path.basename(matching_path_labels[i])
 
-                io.imsave(os.path.join(pred_image_dir, f_img), util.img_as_ubyte(image))
-                io.imsave(os.path.join(pred_label_dir, f_label), util.img_as_ubyte(label))
+            io.imsave(os.path.join(pred_image_dir, f_img), util.img_as_ubyte(image))
+            io.imsave(os.path.join(pred_label_dir, f_label), util.img_as_ubyte(label))
 
     return None
 

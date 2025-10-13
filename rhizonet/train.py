@@ -148,6 +148,8 @@ def train_model(args):
 
     # Initialize PyTorch Lightning trainer
     trainer = pl.Trainer(
+        # precision="16-mixed", 
+        # accumulate_grad_batches=2, # for batch size 2, add these 2 lines if memory issues
         default_root_dir=log_dir,
         callbacks=[checkpoint_callback, lr_monitor, stopping_callback],
         log_every_n_steps=1,

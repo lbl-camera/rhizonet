@@ -130,7 +130,7 @@ def get_weights(
     nonzero_mask = class_counts > 0
     class_weights[nonzero_mask] = 1 / class_counts[nonzero_mask]
     class_weights /= class_weights.sum()
-    print("class weights {}".format(class_weights))
+    # print("class weights {}".format(class_weights))
 
     return class_weights
 
@@ -213,6 +213,7 @@ def elliptical_crop(img: np.ndarray,
     cropped_image = TF.to_pil_image(torch.mul(TF.to_tensor(image), mask_tensor))
 
     return image, np.array(cropped_image)
+
 
 
 def get_image_paths(dir: str) -> List[str]:
@@ -302,7 +303,30 @@ def createBinaryAnnotation(img: Union[np.ndarray, torch.Tensor],
         raise TypeError("Input should be a PyTorch tensor or a NumPy array.")
     return bkg + frg
 
+def common_files(folder1, folder2, prefix="Annotation"):
+    """
+    Compare two folders and return a list of base filenames (ignoring extensions)
+    that exist in both folders.
+    Files in folder2 may have a prefix (default: 'Annotation') that is ignored.
+    """
+    def get_basenames(folder, remove_prefix=False):
+        basenames = set()
+        for f in os.listdir(folder):
+            if not os.path.isfile(os.path.join(folder, f)):
+                continue
+            name, _ = os.path.splitext(f)
+            if remove_prefix and name.startswith(prefix):
+                name = name[len(prefix):]
+            basenames.add(name)
+        return basenames
 
+    base1 = get_basenames(folder1)
+    base2 = get_basenames(folder2, remove_prefix=True)
+
+    unique = base1.intersection(base2) #intersection()
+    return sorted(unique)
+
+    
 def get_biomass(binary_img: np.ndarray) -> int:
     """
     Calculate the biomass by counting the number of pixels equal to 1
@@ -324,3 +348,4 @@ def get_biomass(binary_img: np.ndarray) -> int:
         nerror += 1
         print("Seg error in ")
     return nbiomass
+

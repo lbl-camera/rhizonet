@@ -6,6 +6,7 @@
   "nb_pred_data": "1",
   "train_patch_size": [64,64],
   "step_size": [32,32],
-  "min_labeled": 0.2
+  "min_labeled": 0.2,
+  "label_prefix": "Annotation"
 
 }
