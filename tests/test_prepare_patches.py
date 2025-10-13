@@ -56,7 +56,7 @@ def test_prepare_patches():
         "step_size": (32, 32),
         "min_labeled": 0.1,
         "nb_pred_data": None,
-        "label_prefix": ""
+        "label_prefix": "Annotation"
     }
     with TemporaryDirectory() as temp_dir:
         images_dir = os.path.join(temp_dir, "images")
@@ -70,7 +70,7 @@ def test_prepare_patches():
             label[32:96, 32:96] = 1  # Annotated region
 
             io.imsave(os.path.join(images_dir, f"image_{i}.png"), img)
-            io.imsave(os.path.join(labels_dir, f"label_{i}.png"), label)
+            io.imsave(os.path.join(labels_dir, f"Annotationimage_{i}.png"), label)
 
         sample_config["images_path"] = images_dir
         sample_config["labels_path"] = labels_dir

@@ -77,7 +77,6 @@ def prepare_patches(args: Dict):
 
     # Add condition to keep only matching files in images and labels directory
     label_prefix = args['label_prefix']
-    
     unique_files = common_files(args['images_path'], args['labels_path'], prefix=label_prefix)
     matching_path_images = sorted([os.path.join(args['images_path'], e + endpoint_img) for e in unique_files])
     matching_path_labels = sorted([os.path.join(args['labels_path'], label_prefix + e + endpoint_lbl) for e in unique_files])

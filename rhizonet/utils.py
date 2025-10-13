@@ -322,7 +322,6 @@ def common_files(folder1, folder2, prefix="Annotation"):
 
     base1 = get_basenames(folder1)
     base2 = get_basenames(folder2, remove_prefix=True)
-
     unique = base1.intersection(base2) #intersection()
     return sorted(unique)
 
