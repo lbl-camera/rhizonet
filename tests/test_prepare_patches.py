@@ -53,7 +53,8 @@ def test_prepare_patches():
         "train_patch_size": (64, 64),
         "step_size": (32, 32),
         "min_labeled": 0.1,
-        "nb_pred_data": None
+        "nb_pred_data": None,
+        "label_prefix": "Annotation"
     }
     with TemporaryDirectory() as temp_dir:
         images_dir = os.path.join(temp_dir, "images")
