@@ -26,9 +26,9 @@ from tqdm import tqdm
 from typing import Dict, Tuple, Sequence 
 
 try:
-    from .utils import get_image_paths, common_files
+    from .utils import get_image_paths, match_image_label_lists, common_files
 except ImportError:
-    from utils import get_image_paths, common_files
+    from utils import get_image_paths, match_image_label_lists, common_files
 
 
 def parse_prepare_variables(argparse_args):
@@ -78,7 +78,7 @@ def prepare_patches(args: Dict):
     # Add condition to keep only matching files in images and labels directory
     label_prefix = args['label_prefix']
     
-    unique_files, endpoint_img, endpoint_lbl = common_files(args['images_path'], args['labels_path'], prefix=label_prefix)
+    unique_files = common_files(args['images_path'], args['labels_path'], prefix=label_prefix)
     matching_path_images = sorted([os.path.join(args['images_path'], e + endpoint_img) for e in unique_files])
     matching_path_labels = sorted([os.path.join(args['labels_path'], label_prefix + e + endpoint_lbl) for e in unique_files])
     print("Number of maching images: {} \n Number of maching labels: {}".format(len(matching_path_images), len(matching_path_labels)))
