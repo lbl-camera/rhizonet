@@ -68,7 +68,7 @@ def test_prepare_patches():
             label[32:96, 32:96] = 1  # Annotated region
 
             io.imsave(os.path.join(images_dir, f"image_{i}.png"), img)
-            io.imsave(os.path.join(labels_dir, f"label_{i}.png"), label)
+            io.imsave(os.path.join(labels_dir, f"Annotationlabel_{i}.png"), label)
 
         sample_config["images_path"] = images_dir
         sample_config["labels_path"] = labels_dir
