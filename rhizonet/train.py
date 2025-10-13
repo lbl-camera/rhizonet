@@ -23,7 +23,7 @@ import glob
 import pytorch_lightning as pl
 from skimage import io, color
 from argparse import Namespace
-
+from pathlib  import Path
 
 from monai.data import list_data_collate
 from lightning.pytorch.loggers import WandbLogger
@@ -105,6 +105,18 @@ def train_model(args):
 
     images = get_image_paths(image_dir)
     labels = get_image_paths(label_dir)
+
+#    Get matching images and labels 
+    lbl_extension = Path(labels[0]).suffix
+    i = 0 # count number of images removed that did not appear in list of labels
+    print("Checking that all filepaths in images have matching label")
+    for img_path in tqdm(images):
+        img_name = os.path.splitext(img_path)[0].split("/")[-1]
+        lbl_name = dataset_params["label_prefix"] + img_name + lbl_extension
+        if not os.path.isfile(os.path.join(label_dir, lbl_name)):
+            images.remove(img_path)
+            i += 1
+    print("Removed {} images from the list of images after match checking".format(i))
 
     # Split data into training, validation and test sets
     train_len, val_len, test_len = np.cumsum(np.round(len(images) * np.array(dataset_params['data_split'])).astype(int))
