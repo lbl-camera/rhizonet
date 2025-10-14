@@ -538,8 +538,11 @@ class Unet2D(pl.LightningModule):
 
         with open(os.path.join(self.hparams.log_dir, 'test_stats.csv'), 'w') as f:
             writer = csv.writer(f)
-            writer.writerow("acc, prec, recall, iou, dice")
-            writer.writerow(f"{acc:.02f}, {prec:.02f}, {recall:.02f}, {iou:.02f}, {dice:.02f}")
+            # writer.writerow(["acc, prec, recall, iou, dice"])
+            # writer.writerow([f"{acc:.02f}", f"{prec:.02f}", f"{recall:.02f}", f"{iou:.02f}", f"{dice:.02f}"])
+            writer.writerow(["acc", "prec", "recall", "iou", "dice"])
+            writer.writerow([acc, prec, recall, iou, dice])
+
 
     def pred_function(self, image):
         return sliding_window_inference(image, self.hparams.pred_patch_size, 1, self.forward)

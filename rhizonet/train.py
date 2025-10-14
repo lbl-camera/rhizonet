@@ -20,6 +20,7 @@ import numpy as np
 from argparse import ArgumentParser
 import torch
 import glob
+from tqdm import tqdm
 import pytorch_lightning as pl
 from skimage import io, color
 from argparse import Namespace
@@ -99,8 +100,12 @@ def train_model(args):
     # Load image and label filepaths 
     args, dataset_params, model_params = _parse_training_variables(args)
     image_dir, label_dir, log_dir = model_params['image_dir'], model_params['label_dir'], model_params['log_dir']
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+    os.makedirs(log_dir, exist_ok=True)
+    
+    # Save json parameters to log directory
+    with open(os.path.join(log_dir, 'training_parameters.json'), 'w') as f:
+        json.dump(args, f)
+
     images, labels = [], []
 
     images = get_image_paths(image_dir)
