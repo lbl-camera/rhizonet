@@ -237,7 +237,7 @@ class PredDataset2D(Dataset):
         img_name = self.data_file[idx]
         img_path = os.path.join(self.pred_data_dir, img_name)
         # img_path = self.data_file[idx]
-        img = np.array(Image.open(img_path))
+        img = io.imread(img_path)
         if img.ndim == 4 and img.shape[-1] < 4:  # If shape is (h, w, d, c) assuming there are maximum 3 channels or modalities 
             img = np.transpose(img[...,:3], (3, 0, 1, 2))  # Move channel to the first position
             img = dynamic_scale(img)
