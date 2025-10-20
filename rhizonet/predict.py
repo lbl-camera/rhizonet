@@ -86,7 +86,7 @@ def transform_image(img_path:str) -> Tuple[np.ndarray, str]:
             EnsureType()
         ]
     )
-    img = np.array(Image.open(img_path))# only 3 modalities are accepted in the channel dimension for now
+    img = io.imread(img_path)# only 3 modalities are accepted in the channel dimension for now
     if img.ndim == 4 and img.shape[-1] < 4:  # If shape is (h, w, d, c) assuming there are maximum 4 channels or modalities 
         img = np.transpose(img[..., :3] , (3, 0, 1, 2))  # Move channel to the first position
         img = dynamic_scale(img)
