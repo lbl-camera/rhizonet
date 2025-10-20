@@ -181,7 +181,7 @@ def get_prediction(
         binary_mask = createBinaryAnnotation(pred, frg_class=frg_class).astype(np.uint8)
         io.imsave(os.path.join(save_path, os.path.basename(file).split('.')[0] + ".png"), binary_mask, check_contrast=False)
     else:
-        io.imsave(os.path.join(save_path, os.path.basename(file).split('.')[0] + ".png"), pred.astype(np.unint8), check_contrast=False)
+        io.imsave(os.path.join(save_path, os.path.basename(file).split('.')[0] + ".png"), pred, check_contrast=False)
 
 
 def predict_model(args: Dict):
