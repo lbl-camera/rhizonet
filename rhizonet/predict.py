@@ -148,7 +148,7 @@ def predict_step(
     tensor_cropped_image = torch.tensor(cropped_image).to(device)
     logits = pred_function(tensor_cropped_image.float(), model, pred_patch_size)
     pred = torch.argmax(logits, dim=1).byte().squeeze(dim=1)
-    pred = (pred * 255).byte()
+    # pred = (pred * 255).byte()
     return pred
 
 
