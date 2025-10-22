@@ -111,7 +111,8 @@ def prepare_patches(args: Dict):
         
         img_crop = np.vstack(
             util.view_as_windows(image, window_shape=image_patch_size, step=image_step_size))
-        img_crop = img_crop.squeeze(1)
+        if len(image.shape) > 2: # not grayscale
+            img_crop = img_crop.squeeze(1)
 
         label_crop = np.vstack(
             util.view_as_windows(label, window_shape=args['train_patch_size'], step=args['step_size']))
