@@ -330,7 +330,7 @@ class Unet2D(pl.LightningModule):
                 kernel_size=3,
                 up_kernel_size=3,
                 num_res_units=2,
-                dropout=0.4,
+                dropout=0.3,
                 norm=Norm.BATCH,
             )
 
@@ -339,7 +339,7 @@ class Unet2D(pl.LightningModule):
             img_size = self.hparams.pred_patch_size
             feature_size = 48        
             use_checkpoint = True   
-            dropout_rate = 0.4
+            dropout_rate = 0.3
             attention_dropout_rate = 0.2
             depths = [2, 4, 8, 16, 24]  
             num_heads = [3, 6, 12, 24, 12] 

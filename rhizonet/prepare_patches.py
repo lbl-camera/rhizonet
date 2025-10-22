@@ -100,12 +100,12 @@ def prepare_patches(args: Dict):
     for i in tqdm(train_idx):
         
         image, label = io.imread(matching_path_images[i]), io.imread(matching_path_labels[i])
-        if image.shape[2] >= 3: # RGB or RGBA image
-            image_patch_size = args['train_patch_size'] + (image.shape[2], ) 
-            image_step_size = args['step_size'] + (3,)
-        elif len(image.shape) == 2: # Grayscale image 
+        if len(image.shape) == 2: # Grayscale image 
             image_patch_size = args['train_patch_size'] 
             image_step_size = args['step_size'] 
+        elif image.shape[2] >= 3: # RGB or RGBA image
+            image_patch_size = args['train_patch_size'] + (image.shape[2], ) 
+            image_step_size = args['step_size'] + (3,)
         else:
             raise AttributeError("image should be of RGB, RGBA or grayscale")
         
