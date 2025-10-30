@@ -111,7 +111,7 @@ def prepare_patches(args: Dict):
         
         img_crop = np.vstack(
             util.view_as_windows(image, window_shape=image_patch_size, step=image_step_size))
-        if len(img_crop.shape) > 2: # not grayscale
+        if len(image.shape) > 2: # not grayscale
             img_crop = img_crop.squeeze(1)
 
         label_crop = np.vstack(
@@ -125,8 +125,8 @@ def prepare_patches(args: Dict):
                 fname_img = f"{f_img}_img_{i:04d}_crop-{j:04d}.tif"
                 fname_label = f"{f_label}_img_{i:04d}_crop-{j:04d}.png"
 
-                io.imsave(os.path.join(image_dir, fname_img), util.img_as_ubyte(img), check_contrast=False)
-                io.imsave(os.path.join(label_dir, fname_label), util.img_as_ubyte(lab), check_contrast=False)
+                io.imsave(os.path.join(image_dir, fname_img), util.img_as_ubyte(img.astype(np.uint8)), check_contrast=False)
+                io.imsave(os.path.join(label_dir, fname_label), util.img_as_ubyte(lab.astype(np.uint8)), check_contrast=False)
 
     if args['nb_pred_data'] is not None:
         pred_image_dir = os.path.join(args['save_pred_path'], 'images')
@@ -139,8 +139,8 @@ def prepare_patches(args: Dict):
             f_img = os.path.basename(matching_path_images[i])
             f_label = os.path.basename(matching_path_labels[i])
 
-            io.imsave(os.path.join(pred_image_dir, f_img), util.img_as_ubyte(image))
-            io.imsave(os.path.join(pred_label_dir, f_label), util.img_as_ubyte(label))
+            io.imsave(os.path.join(pred_image_dir, f_img), util.img_as_ubyte(image.astype(np.uint8)))
+            io.imsave(os.path.join(pred_label_dir, f_label), util.img_as_ubyte(label.astype(np.uint8)))
 
     return None
 
